@@ -1,0 +1,16 @@
+{
+  "name": "drap-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DRAP SoftwareHouse & Business — site de apresentação e marketing com catálogo de plataformas, captação de leads e painel administrativo (Supabase).",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && node scripts/serve.mjs",
+    "seed:gen": "node scripts/gen-seed.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

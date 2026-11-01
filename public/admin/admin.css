@@ -1,0 +1,84 @@
+/* DRAP — Painel administrativo (reaproveita tokens e camada vítrea de /styles.css) */
+[hidden] { display: none !important; }
+.admin { min-height: 100vh; }
+.adm-card {
+  background: linear-gradient(135deg, var(--glass-sheen), transparent 40%), var(--glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(var(--glass-sat)); backdrop-filter: blur(24px) saturate(var(--glass-sat));
+  border: 1px solid var(--glass-line); border-radius: var(--radius); box-shadow: var(--glass-shadow);
+}
+.adm-muted { color: var(--text-dim); margin: 0 0 18px; }
+
+/* Login / mensagens */
+.adm-login { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+.adm-login__card { width: min(420px, 100%); padding: 36px; display: grid; gap: 14px; }
+.adm-login__card h1 { margin: 10px 0 0; font-size: 34px; font-weight: 500; letter-spacing: -.03em; }
+.adm-login__card .serif { color: var(--accent-text); }
+.adm-login__card .btn { justify-self: start; }
+
+/* Topo */
+.adm-top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 24px; padding: 14px 28px; background: var(--glass-bg-strong); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); border-bottom: 1px solid var(--glass-line); }
+.adm-tabs { display: flex; gap: 4px; margin-right: auto; }
+.adm-tabs button { font: 500 14px var(--font-sans); color: var(--text-dim); background: none; border: 1px solid transparent; padding: 8px 14px; border-radius: 9px; cursor: pointer; }
+.adm-tabs button:hover { color: var(--text); background: var(--tint-2); }
+.adm-tabs button.is-active { color: var(--text); background: var(--glass-bg); border-color: var(--glass-line); box-shadow: 0 1px 0 var(--glass-edge) inset; }
+.adm-tabs b { font: 500 10px var(--font-mono); background: var(--accent); color: var(--on-accent); border-radius: 10px; padding: 1px 6px; margin-left: 4px; }
+.adm-tabs b:empty { display: none; }
+.adm-user { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-mute); }
+
+.adm-main { padding: 28px; max-width: 1400px; margin: 0 auto; }
+
+/* KPIs */
+.adm-kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 18px; }
+.adm-kpi { padding: 14px 16px; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-line); box-shadow: 0 1px 0 var(--glass-edge) inset; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.adm-kpi small { display: block; font-size: 10px; letter-spacing: .14em; color: var(--text-mute); }
+.adm-kpi b { font-size: 28px; font-weight: 500; letter-spacing: -.03em; }
+.adm-kpi--novo b { color: var(--accent-text); } .adm-kpi--ganho b { color: var(--ok); } .adm-kpi--perdido b { color: var(--err); }
+
+/* Toolbar */
+.adm-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.adm-toolbar input, .adm-toolbar select, .adm-table select, .adm-table textarea, .adm-pform input, .adm-pform select, .adm-pform textarea {
+  font: 14px var(--font-sans); color: var(--text); background: var(--glass-bg-soft); border: 1px solid var(--glass-line); border-radius: 9px; padding: 9px 12px; outline: none;
+}
+.adm-toolbar input { flex: 1; min-width: 240px; }
+.adm-toolbar input:focus, .adm-table textarea:focus, .adm-pform :is(input, select, textarea):focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent); }
+
+/* Tabela */
+.adm-table-wrap { overflow-x: auto; }
+.adm-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.adm-table th { text-align: left; font: 500 10px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text-mute); padding: 14px; border-bottom: 1px solid var(--glass-line); }
+.adm-table td { padding: 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.adm-table tr:last-child td { border-bottom: 0; }
+.adm-table td small { display: block; color: var(--text-mute); font-size: 11.5px; }
+.adm-table td a { display: block; color: var(--accent-2-text); font-size: 12.5px; }
+.adm-table textarea { width: 100%; min-width: 180px; resize: vertical; font-size: 13px; }
+.adm-msg { max-width: 320px; color: var(--text-dim); white-space: pre-wrap; }
+.adm-nowrap { white-space: nowrap; font-size: 12px; }
+.adm-empty { text-align: center; color: var(--text-mute); padding: 48px !important; }
+.adm-status { font-weight: 500; }
+.adm-status--novo { color: var(--accent-text); } .adm-status--ganho { color: var(--ok); } .adm-status--perdido { color: var(--err); }
+
+/* Plataformas */
+.adm-plist { display: grid; gap: 12px; }
+.adm-pitem summary { display: flex; align-items: center; gap: 12px; padding: 16px 20px; cursor: pointer; list-style: none; }
+.adm-pitem summary::-webkit-details-marker { display: none; }
+.adm-pitem summary small { color: var(--text-mute); margin-right: auto; }
+.adm-pdot { width: 12px; height: 12px; border-radius: 4px; background: var(--c); box-shadow: 0 0 12px var(--c); }
+.adm-pill { font: 10px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 4px 9px; border-radius: 20px; border: 1px solid var(--glass-line); color: var(--text-mute); }
+.adm-pill.on { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.adm-pform { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 4px 20px 20px; }
+.adm-pform label { display: grid; gap: 6px; font: 10.5px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-mute); }
+.adm-pform .w2 { grid-column: 1 / -1; }
+.adm-pform .adm-check { display: flex; align-items: center; gap: 8px; align-self: end; }
+.adm-pactions { display: flex; justify-content: flex-end; }
+
+/* Configurações */
+.adm-settings { display: grid; gap: 14px; padding: 24px; max-width: 560px; }
+.adm-settings .btn { justify-self: start; }
+
+@media (max-width: 900px) {
+  .adm-top { flex-wrap: wrap; padding: 12px 16px; }
+  .adm-tabs { order: 3; width: 100%; overflow-x: auto; }
+  .adm-main { padding: 16px; }
+  .adm-kpis { grid-template-columns: repeat(3, 1fr); }
+  .adm-pform { grid-template-columns: 1fr; }
+}

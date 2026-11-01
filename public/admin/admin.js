@@ -1,0 +1,188 @@
+/* DRAP — Painel administrativo (Supabase Auth + RLS) */
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const cfg = window.DRAP_CONFIG || {};
+
+  const show = (id) => ["view-login", "view-message", "view-app"].forEach((v) => ($("#" + v).hidden = v !== id));
+  const message = (title, text, canLogout = false) => {
+    $("#msg-title").textContent = title; $("#msg-text").textContent = text; $("#msg-logout").hidden = !canLogout; show("view-message");
+  };
+  let toastT;
+  const toast = (txt) => { const t = $("#toast"); t.textContent = txt; t.classList.add("is-on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("is-on"), 2200); };
+
+  if (!cfg.supabaseUrl || !cfg.supabaseAnonKey || !window.supabase) {
+    message("Supabase não configurado", "Defina SUPABASE_URL e SUPABASE_ANON_KEY nas variáveis de ambiente da Vercel e faça um novo deploy.");
+    return;
+  }
+  const sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true } });
+
+  const STATUS = { novo: "Novo", em_contato: "Em contato", proposta: "Proposta", ganho: "Ganho", perdido: "Perdido" };
+  const fmtDate = (iso) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const digits = (s) => String(s || "").replace(/\D/g, "");
+
+  let leads = [], platforms = [];
+
+  /* ---------------- autenticação ---------------- */
+  async function boot() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return show("view-login");
+    const { data: isAdmin, error } = await sb.rpc("is_admin");
+    if (error) return message("Erro ao verificar acesso", error.message, true);
+    if (!isAdmin) return message("Sem acesso", `A conta ${session.user.email} não está cadastrada como administradora. Veja o README (seção "Criar o primeiro administrador").`, true);
+    $("#user-email").textContent = session.user.email;
+    show("view-app");
+    await Promise.all([loadLeads(), loadPlatforms(), loadSettings()]);
+  }
+
+  $("#login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const st = $("#login-status");
+    st.className = "form__status mono"; st.textContent = "› entrando…";
+    const { error } = await sb.auth.signInWithPassword({ email: $("#l-email").value.trim(), password: $("#l-pass").value });
+    if (error) { st.className = "form__status mono err"; st.textContent = "✕ e-mail ou senha inválidos"; return; }
+    st.textContent = "";
+    boot();
+  });
+  const logout = async () => { await sb.auth.signOut(); show("view-login"); };
+  $("#logout").addEventListener("click", logout);
+  $("#msg-logout").addEventListener("click", logout);
+
+  /* ---------------- abas ---------------- */
+  $(".adm-tabs").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tab]"); if (!b) return;
+    $$(".adm-tabs [data-tab]").forEach((x) => x.classList.toggle("is-active", x === b));
+    $$("[data-panel]").forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.tab));
+  });
+
+  /* ---------------- leads ---------------- */
+  async function loadLeads() {
+    const { data, error } = await sb.from("leads").select("*").order("created_at", { ascending: false }).limit(1000);
+    if (error) return toast("Erro ao carregar leads: " + error.message);
+    leads = data; renderLeads();
+  }
+  const platformName = (id) => platforms.find((p) => p.id === id)?.name || id || "";
+
+  function renderLeads() {
+    const counts = Object.fromEntries(Object.keys(STATUS).map((k) => [k, leads.filter((l) => l.status === k).length]));
+    $("#lead-kpis").innerHTML =
+      `<div class="adm-kpi"><small class="mono">TOTAL</small><b>${leads.length}</b></div>` +
+      Object.entries(STATUS).map(([k, label]) => `<div class="adm-kpi adm-kpi--${k}"><small class="mono">${label.toUpperCase()}</small><b>${counts[k]}</b></div>`).join("");
+    $("#badge-new").textContent = counts.novo || "";
+
+    const q = $("#lead-search").value.trim().toLowerCase();
+    const f = $("#lead-filter").value;
+    const rows = leads.filter((l) => (!f || l.status === f) && (!q || [l.name, l.email, l.company].some((x) => (x || "").toLowerCase().includes(q))));
+    $("#lead-table").innerHTML = `
+      <thead><tr><th>Recebido</th><th>Contato</th><th>Interesse</th><th>Mensagem</th><th>Status</th><th>Notas internas</th></tr></thead>
+      <tbody>${rows.length ? rows.map((l) => `
+        <tr data-id="${l.id}">
+          <td class="mono adm-nowrap">${fmtDate(l.created_at)}</td>
+          <td><b>${esc(l.name)}</b>${l.company ? `<small>${esc(l.company)}</small>` : ""}
+            <a href="mailto:${esc(l.email)}">${esc(l.email)}</a>
+            ${l.phone ? `<a href="https://wa.me/${digits(l.phone)}" target="_blank" rel="noopener">WhatsApp ${esc(l.phone)}</a>` : ""}</td>
+          <td>${esc(platformName(l.platform_id) || l.interest || "—")}<small class="mono">${esc(l.source || "")}</small></td>
+          <td class="adm-msg">${esc(l.message || "—")}</td>
+          <td><select class="adm-status adm-status--${l.status}" data-field="status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${k === l.status ? " selected" : ""}>${v}</option>`).join("")}</select></td>
+          <td><textarea data-field="notes" rows="2" maxlength="4000" placeholder="Anotar…">${esc(l.notes || "")}</textarea></td>
+        </tr>`).join("") : `<tr><td colspan="6" class="adm-empty">Nenhum lead ${q || f ? "com esse filtro" : "ainda"}.</td></tr>`}
+      </tbody>`;
+  }
+  $("#lead-search").addEventListener("input", renderLeads);
+  $("#lead-filter").addEventListener("change", renderLeads);
+  $("#lead-refresh").addEventListener("click", () => loadLeads().then(() => toast("Leads atualizados")));
+
+  async function updateLead(id, patch) {
+    const { error } = await sb.from("leads").update(patch).eq("id", id);
+    if (error) return toast("Erro ao salvar: " + error.message);
+    Object.assign(leads.find((l) => l.id === id), patch);
+    toast("Salvo");
+  }
+  $("#lead-table").addEventListener("change", (e) => {
+    const el = e.target.closest("[data-field]"); if (!el) return;
+    const id = el.closest("tr").dataset.id;
+    updateLead(id, { [el.dataset.field]: el.value || null }).then(() => { if (el.dataset.field === "status") renderLeads(); });
+  });
+
+  $("#lead-export").addEventListener("click", () => {
+    const cols = ["created_at", "name", "email", "phone", "company", "platform_id", "interest", "message", "source", "status", "notes"];
+    const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const csv = "﻿" + [cols.join(";"), ...leads.map((l) => cols.map((c) => cell(l[c])).join(";"))].join("\r\n");
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })), download: `leads-drap-${new Date().toISOString().slice(0, 10)}.csv` });
+    a.click(); URL.revokeObjectURL(a.href);
+  });
+
+  /* ---------------- plataformas ---------------- */
+  async function loadPlatforms() {
+    const { data, error } = await sb.from("platforms").select("*").order("sort_order");
+    if (error) return toast("Erro ao carregar plataformas: " + error.message);
+    platforms = data; renderPlatforms(); renderLeads();
+  }
+  function renderPlatforms() {
+    $("#platform-list").innerHTML = platforms.map((p) => `
+      <details class="adm-card adm-pitem" data-id="${esc(p.id)}" style="--c:${esc(p.palette[0])}">
+        <summary>
+          <span class="adm-pdot"></span>
+          <b>${esc(p.name)}</b><small class="mono">${esc(p.code)} · ${esc(p.category)}</small>
+          <span class="adm-pill ${p.active ? "on" : ""}">${p.active ? "Publicada" : "Oculta"}</span>
+          <span class="adm-pill">${esc(p.status)}</span>
+        </summary>
+        <form class="adm-pform">
+          <label>Nome<input name="name" value="${esc(p.name)}" maxlength="80" required /></label>
+          <label>Código<input name="code" value="${esc(p.code)}" maxlength="20" required /></label>
+          <label>Categoria<input name="category" value="${esc(p.category)}" maxlength="60" required /></label>
+          <label>Status<select name="status">${["Disponível", "Beta", "Sob demanda"].map((s) => `<option${s === p.status ? " selected" : ""}>${s}</option>`).join("")}</select></label>
+          <label class="w2">Frase de posicionamento<input name="tagline" value="${esc(p.tagline)}" maxlength="160" /></label>
+          <label class="w2">Resumo<textarea name="summary" rows="3" maxlength="600">${esc(p.summary)}</textarea></label>
+          <label>Destaques (um por linha, até 6)<textarea name="features" rows="4">${esc(p.features.join("\n"))}</textarea></label>
+          <label>Tecnologias (separadas por vírgula)<input name="stack" value="${esc(p.stack.join(", "))}" /></label>
+          <label>Paleta (hex, separados por vírgula)<input name="palette" value="${esc(p.palette.join(", "))}" pattern="^\\s*#[0-9A-Fa-f]{6}(\\s*,\\s*#[0-9A-Fa-f]{6})*\\s*$" required /></label>
+          <label>Link (URL ou #contato)<input name="url" value="${esc(p.url)}" maxlength="300" /></label>
+          <label>Ordem<input name="sort_order" type="number" value="${p.sort_order}" step="10" /></label>
+          <label class="adm-check"><input type="checkbox" name="active"${p.active ? " checked" : ""} /> Publicada no site</label>
+          <div class="w2 adm-pactions"><button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar alterações</span><span class="btn__icon" aria-hidden="true">✓</span></button></div>
+        </form>
+      </details>`).join("");
+  }
+  $("#platform-list").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target, id = form.closest("[data-id]").dataset.id, fd = new FormData(form);
+    const list = (s, sep) => String(s || "").split(sep).map((x) => x.trim()).filter(Boolean);
+    const patch = {
+      name: fd.get("name").trim(), code: fd.get("code").trim(), category: fd.get("category").trim(), status: fd.get("status"),
+      tagline: fd.get("tagline").trim(), summary: fd.get("summary").trim(),
+      features: list(fd.get("features"), /\n/).slice(0, 6), stack: list(fd.get("stack"), ",").slice(0, 6),
+      palette: list(fd.get("palette"), ",").map((h) => h.toUpperCase()), url: fd.get("url").trim() || "#contato",
+      sort_order: Number(fd.get("sort_order")) || 100, active: fd.get("active") === "on",
+    };
+    const { error } = await sb.from("platforms").update(patch).eq("id", id);
+    if (error) return toast("Erro: " + error.message);
+    toast("Plataforma salva");
+    loadPlatforms();
+  });
+
+  /* ---------------- configurações ---------------- */
+  const SETTINGS = [
+    ["contact_email", "E-mail de contato"],
+    ["contact_whatsapp", "WhatsApp"],
+    ["contact_hours", "Horário de atendimento"],
+  ];
+  async function loadSettings() {
+    const { data, error } = await sb.from("site_settings").select("key,value");
+    if (error) return toast("Erro ao carregar configurações: " + error.message);
+    const map = Object.fromEntries(data.map((s) => [s.key, s.value]));
+    $("#settings-form").innerHTML = SETTINGS.map(([k, label]) => `
+      <div class="field"><label class="mono" for="s-${k}">${label}</label><input id="s-${k}" name="${k}" value="${esc(map[k] || "")}" maxlength="500" /></div>`).join("") +
+      `<button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar</span><span class="btn__icon" aria-hidden="true">✓</span></button>`;
+  }
+  $("#settings-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const rows = SETTINGS.map(([k]) => ({ key: k, value: e.target.elements[k].value.trim() })).filter((r) => r.value);
+    const { error } = await sb.from("site_settings").upsert(rows);
+    toast(error ? "Erro: " + error.message : "Configurações salvas");
+  });
+
+  sb.auth.onAuthStateChange((evt) => { if (evt === "SIGNED_OUT") show("view-login"); });
+  boot();
+})();

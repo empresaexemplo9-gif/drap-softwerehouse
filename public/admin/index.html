@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Painel · DRAP SoftwareHouse &amp; Business</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <script src="/theme-init.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body class="admin">
+  <div class="bg" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--a"></div>
+    <div class="bg-glow bg-glow--b"></div>
+    <div class="bg-glow bg-glow--c"></div>
+  </div>
+
+  <!-- Login -->
+  <section class="adm-login" id="view-login" hidden>
+    <form class="adm-card adm-login__card" id="login-form" novalidate>
+      <a href="/" class="brand" aria-label="Voltar ao site">
+        <span class="brand__text"><strong>DRAP</strong><small>Painel<em>&amp;</em>Business</small></span>
+      </a>
+      <h1>Entrar no <span class="serif">painel</span></h1>
+      <p class="adm-muted">Acesso restrito à equipe DRAP.</p>
+      <div class="field"><label for="l-email" class="mono">email</label><input id="l-email" type="email" autocomplete="username" required /></div>
+      <div class="field"><label for="l-pass" class="mono">senha</label><input id="l-pass" type="password" autocomplete="current-password" required /></div>
+      <button class="btn btn--primary btn--block" type="submit"><span class="btn__label">Entrar</span><span class="btn__icon" aria-hidden="true">→</span></button>
+      <p class="form__status mono" id="login-status" role="status"></p>
+    </form>
+  </section>
+
+  <!-- Sem configuração / sem acesso -->
+  <section class="adm-login" id="view-message" hidden>
+    <div class="adm-card adm-login__card">
+      <h1 id="msg-title">—</h1>
+      <p class="adm-muted" id="msg-text"></p>
+      <button class="btn btn--ghost" id="msg-logout" hidden><span class="btn__label">Sair</span></button>
+      <a class="btn btn--ghost" href="/"><span class="btn__label">Voltar ao site</span></a>
+    </div>
+  </section>
+
+  <!-- App -->
+  <div class="adm-app" id="view-app" hidden>
+    <header class="adm-top">
+      <a href="/" class="brand"><span class="brand__text"><strong>DRAP</strong><small>Painel<em>&amp;</em>Business</small></span></a>
+      <nav class="adm-tabs" role="tablist">
+        <button role="tab" class="is-active" data-tab="leads">Leads <b id="badge-new"></b></button>
+        <button role="tab" data-tab="platforms">Plataformas</button>
+        <button role="tab" data-tab="settings">Configurações</button>
+      </nav>
+      <div class="adm-user"><span class="mono" id="user-email"></span><button class="btn btn--ghost btn--sm" id="logout"><span class="btn__label">Sair</span></button></div>
+    </header>
+
+    <main class="adm-main">
+      <!-- LEADS -->
+      <section data-panel="leads">
+        <div class="adm-kpis" id="lead-kpis"></div>
+        <div class="adm-toolbar">
+          <input type="search" id="lead-search" placeholder="Buscar por nome, e-mail ou empresa…" />
+          <select id="lead-filter">
+            <option value="">Todos os status</option>
+            <option value="novo">Novo</option><option value="em_contato">Em contato</option>
+            <option value="proposta">Proposta</option><option value="ganho">Ganho</option><option value="perdido">Perdido</option>
+          </select>
+          <button class="btn btn--ghost btn--sm" id="lead-refresh"><span class="btn__label">Atualizar</span></button>
+          <button class="btn btn--primary btn--sm" id="lead-export"><span class="btn__label">Exportar CSV</span><span class="btn__icon" aria-hidden="true">↓</span></button>
+        </div>
+        <div class="adm-card adm-table-wrap"><table class="adm-table" id="lead-table"></table></div>
+      </section>
+
+      <!-- PLATAFORMAS -->
+      <section data-panel="platforms" hidden>
+        <p class="adm-muted">Edite o catálogo exibido na home. Alterações aparecem no site imediatamente.</p>
+        <div class="adm-plist" id="platform-list"></div>
+      </section>
+
+      <!-- CONFIGURAÇÕES -->
+      <section data-panel="settings" hidden>
+        <form class="adm-card adm-settings" id="settings-form"></form>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/config.js"></script>
+  <script src="/vendor/supabase.js"></script>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>
