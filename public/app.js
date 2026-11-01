@@ -85,7 +85,7 @@
         )
         .join("");
       return `
-      <article class="card reveal" data-cat="${esc(p.category)}" style="--c:${primary};--c-rgb:${hexToRgb(primary).join(",")};--c-strong:${strongOf(primary)};--c-soft:${softOf(primary)};--c-on:${isLight(primary) ? "#06070a" : "#ffffff"}">
+      <article class="card reveal" data-href="/plataformas/${esc(p.id)}" data-cat="${esc(p.category)}" style="--c:${primary};--c-rgb:${hexToRgb(primary).join(",")};--c-strong:${strongOf(primary)};--c-soft:${softOf(primary)};--c-on:${isLight(primary) ? "#06070a" : "#ffffff"}">
         <div class="card__orb" aria-hidden="true"></div>
         <div class="card__grid"></div>
         <i class="card__tick card__tick--tl"></i><i class="card__tick card__tick--tr"></i>
@@ -100,7 +100,7 @@ ${renderPreview(p)}
         </div>
 
         <div class="card__cat">${esc(p.category)}</div>
-        <h3 class="card__name">${esc(p.name)}</h3>
+        <h3 class="card__name"><a href="/plataformas/${esc(p.id)}">${esc(p.name)}</a></h3>
         <p class="card__tagline">${esc(p.tagline)}</p>
         <p class="card__summary">${esc(p.summary)}</p>
 
@@ -113,7 +113,7 @@ ${renderPreview(p)}
 
         <div class="card__foot">
           <div class="stack">${p.stack.map((s) => `<span>${esc(s)}</span>`).join("")}</div>
-          <a class="card__link" href="${esc(p.url || "#contato")}" data-platform="${esc(p.name)}" data-id="${esc(p.id)}"${isExternal(p.url) ? ' target="_blank" rel="noopener"' : ""}>${isExternal(p.url) ? "Ver ao vivo" : "Solicitar demo"} <i>${isExternal(p.url) ? "↗" : "→"}</i></a>
+          <a class="card__link" href="/plataformas/${esc(p.id)}" aria-label="Conhecer a plataforma ${esc(p.name)}">Conhecer <i>→</i></a>
         </div>
       </article>`;
     })
@@ -167,11 +167,6 @@ ${renderPreview(p)}
       try { await navigator.clipboard.writeText(hex); } catch {}
       showToast(`<i style="background:${hex}"></i> ${hex} copiado`);
       return;
-    }
-    const link = e.target.closest(".card__link");
-    if (link && link.getAttribute("href") === "#contato") {
-      const sel = $("#f-platform");
-      sel.value = link.dataset.id;
     }
   });
 

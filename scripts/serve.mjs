@@ -28,6 +28,11 @@ createServer(async (req, res) => {
       console.error(e); res.writeHead(500).end(); return;
     }
   }
+  // rewrites do vercel.json (ex.: /plataformas/:id → /plataforma)
+  for (const r of vercel.rewrites || []) {
+    const re = new RegExp("^" + r.source.replace(/:[a-z]+/gi, "[^/]+") + "/?$");
+    if (re.test(pathname)) { req.url = r.destination; break; }
+  }
   let p = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^(\.\.[/\\])+/, "");
   const candidates = [p, p + ".html", join(p, "index.html")];
   for (const c of candidates) {

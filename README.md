@@ -4,6 +4,7 @@ Site de apresentação e marketing da DRAP, com:
 
 - **Home**: hero, catálogo das plataformas prontas (cards com prévia da interface, paleta e logo de cada uma), serviços, processo e contato. Tema claro (padrão) e escuro, visual vítreo.
 - **Captação de leads**: o formulário grava no banco, com validação no navegador e no servidor, campo-isca anti-robô e limite de envios (5 por e-mail e 20 por IP a cada 10 minutos).
+- **Página de cada plataforma** (`/plataformas/<id>`): clicar no card abre uma apresentação completa para o cliente: para quem é, problemas que resolve, resultados, módulos, implantação, diferenciais, segurança, “Por que comprar da DRAP”, perguntas frequentes e formulário de demonstração.
 - **Painel `/admin`**: mostra os leads com status, notas, busca, filtros e exportação CSV, permite editar o catálogo de plataformas e os contatos do site.
 
 Stack: HTML, CSS e JS sem framework · funções serverless da Vercel (`/api`) · **Neon Postgres** (criado pela própria Vercel).
@@ -71,6 +72,8 @@ npm run dev                   # aplica migrações, gera dist/ e abre http://loc
 O servidor local executa as funções de `api/` como a Vercel e aplica os mesmos cabeçalhos do `vercel.json`.
 
 ## Editar conteúdo
+
+- **Texto das páginas de plataforma**: `public/platform-details.js`, com um bloco por plataforma (chave = `id`). A seção “Por que comprar da DRAP” fica em `DRAP_QUALITY`, no mesmo arquivo.
 
 - **Plataformas e contatos**: pelo painel `/admin`. As mudanças aparecem no site em até 1 minuto, por causa do cache da CDN.
 - **Prévia de uma plataforma**: as miniaturas ficam em `public/previews.js`, numa função por plataforma. Para usar um screenshot real, coloque a imagem em `public/assets/previews/` e preencha a coluna `preview_image` da plataforma, por exemplo `/assets/previews/tela.png`.

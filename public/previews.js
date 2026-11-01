@@ -32,7 +32,7 @@ window.DRAP_PREVIEWS = {
       <div class="pv-bo__top"><span>Buscar projeto, cliente ou obra…</span><em>AR</em></div>
       <section class="pv-bo__band">
         <div><small>HOJE</small><h4>O que move o trabalho hoje</h4><p>3 tarefas com prazo · 2 propostas abertas</p></div>
-        <img src="assets/previews/backoffice-fachada.webp" alt="" loading="lazy" />
+        <img src="/assets/previews/backoffice-fachada.webp" alt="" loading="lazy" />
       </section>
       <div class="pv-bo__kpis">
         <div><small>01 · Obras ativas</small><b>8</b></div>
@@ -40,7 +40,7 @@ window.DRAP_PREVIEWS = {
         <div class="dark"><small>03 · Margem</small><b>23,4%</b></div>
       </div>
       <div class="pv-bo__list">
-        <div><img src="assets/previews/backoffice-estar.webp" alt="" loading="lazy" /><span><b>Casa Varandas</b><small>Executivo · 72%</small></span><i class="ok">Em dia</i></div>
+        <div><img src="/assets/previews/backoffice-estar.webp" alt="" loading="lazy" /><span><b>Casa Varandas</b><small>Executivo · 72%</small></span><i class="ok">Em dia</i></div>
         <div><span class="ph"></span><span><b>Reforma Ateliê</b><small>Orçamento v3 · BDI 24%</small></span><i class="warn">Atenção</i></div>
       </div>
     </main>
@@ -55,7 +55,7 @@ window.DRAP_PREVIEWS = {
     </aside>
     <main class="pv-pr__main">
       <section class="pv-pr__hero">
-        <img src="assets/previews/professor-campus.webp" alt="" loading="lazy" />
+        <img src="/assets/previews/professor-campus.webp" alt="" loading="lazy" />
         <div><small>CAMPUS DIGITAL</small><h4>Bem-vinda de volta, <em>Ana</em></h4><span class="pv-pr__btn">Continuar de onde parei →</span></div>
       </section>
       <h5>Meu aprendizado</h5>
@@ -168,7 +168,7 @@ window.DRAP_PREVIEWS = {
           <div><time>14:00</time><span><b>Clara Reis</b><small>Retorno · presencial</small></span><i class="ok">Confirmado</i></div>
         </div>
         <div class="pv-cc__vit">
-          <img src="assets/previews/concord-medicina.webp" alt="" loading="lazy" />
+          <img src="/assets/previews/concord-medicina.webp" alt="" loading="lazy" />
           <div><small>VITRINE PÚBLICA</small><b>Dra. Ana Prado</b><span class="stars">★★★★★ <em>4,9</em></span><span class="tag">Registro verificado</span></div>
         </div>
       </div>
