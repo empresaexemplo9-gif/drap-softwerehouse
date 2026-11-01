@@ -8,12 +8,21 @@
      preview: { image: "assets/previews/minha-tela.png" }
    ========================================================================== */
 
+/* Símbolos oficiais, com a geometria de cada repositório:
+   Backoffice/Professor: public/brand/drap-symbol-*.svg (D com corte, 320×330)
+   Fazenda/Pecuária: public/drap-fazenda.svg · Concord: brand/logo.svg */
+const PV_MARK = {
+  cut: (id) => `<svg class="pv-mark" viewBox="0 0 320 330" fill="currentColor" aria-hidden="true"><mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="330"><rect width="320" height="330" fill="#fff"/><path d="M236 -4L252 -4L103 334L97 334Z" fill="#000"/></mask><path d="M0 0H232C284 0 320 46 320 100V230C320 292 284 330 236 330H0Z" mask="url(#${id})"/></svg>`,
+  fazenda: () => '<svg class="pv-mark" viewBox="20.3 5.98 57.2 56.9" fill="currentColor" aria-hidden="true"><path d="M65.41 6.62 39.43 62.87h22.18c8.6 0 15.53-9.61 15.53-21.55V27.53c0-10.12-4.97-18.57-11.73-20.91z"/><path d="M20.36 5.98c-.08 18.97-.05 37.93 0 56.9h18.79L62.76 6.04a11.6 11.6 0 0 0-1.15-.06z"/></svg>',
+  concord: () => '<svg class="pv-mark" viewBox="0 0 778 781" fill="currentColor" aria-hidden="true"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg>',
+};
+
 window.DRAP_PREVIEWS = {
   /* DRAP Backoffice — menu Abismo Nanquim, banner Azul Cianótipo, fundo Pedra Clara */
   backoffice: () => `
   <div class="pv pv-bo">
     <aside class="pv-bo__side">
-      <div class="pv-bo__brand"><i></i><b>DRAP</b><small>BACKOFFICE</small></div>
+      <div class="pv-bo__brand">${PV_MARK.cut("pvm-bo")}<b>DRAP</b><small>BACKOFFICE</small></div>
       <ul>
         <li class="on">Visão geral</li><li>Projetos</li><li>Obras</li><li>Orçamentos</li>
         <li>Propostas</li><li>CRM</li><li>Financeiro</li><li>Prancheta</li><li>Diário de obra</li>
@@ -41,7 +50,7 @@ window.DRAP_PREVIEWS = {
   professor: () => `
   <div class="pv pv-pr">
     <aside class="pv-pr__side">
-      <div class="pv-pr__brand"><i></i><span><b>DRAP</b><small>PROFESSOR</small></span></div>
+      <div class="pv-pr__brand">${PV_MARK.cut("pvm-pr")}<span><b>DRAP</b><small>PROFESSOR</small></span></div>
       <ul><li class="on">Início</li><li>Meu aprendizado</li><li>Catálogo</li><li>Agenda</li><li>Fórum</li><li>Certificados</li></ul>
     </aside>
     <main class="pv-pr__main">
@@ -66,7 +75,7 @@ window.DRAP_PREVIEWS = {
   fazenda: () => `
   <div class="pv pv-fz">
     <header class="pv-fz__head">
-      <div class="pv-fz__brand"><i></i><b>DRAP</b><span>Fazenda</span></div>
+      <div class="pv-fz__brand">${PV_MARK.fazenda()}<b>DRAP</b><span>Fazenda</span></div>
       <nav><span class="on">Lançamentos</span><span>Acerto</span><span>Posição</span><span>Análises</span><span>Conciliação</span><span>NF-e</span><span>PDF</span></nav>
     </header>
     <main class="pv-fz__main">
@@ -90,7 +99,7 @@ window.DRAP_PREVIEWS = {
   pecuaria: () => `
   <div class="pv pv-pc">
     <header class="pv-pc__head">
-      <div class="pv-fz__brand"><i></i><b>DRAP</b><span>Pecuária</span></div>
+      <div class="pv-fz__brand">${PV_MARK.fazenda()}<b>DRAP</b><span>Pecuária</span></div>
       <nav><span class="on">Painel</span><span>Rebanho</span><span>Manejo</span><span>Corte</span><span>Leite</span><span>Genética</span></nav>
       <em class="pv-pc__sync">● offline · 3</em>
     </header>
@@ -147,7 +156,7 @@ window.DRAP_PREVIEWS = {
   concord: () => `
   <div class="pv pv-cc">
     <aside class="pv-cc__side">
-      <div class="pv-cc__brand"><i></i><b>DRAP</b> Concord</div>
+      <div class="pv-cc__brand">${PV_MARK.concord()}<b>DRAP</b> Concord</div>
       <ul><li class="on">Hoje</li><li>Agenda</li><li>Clientes</li><li>Serviços</li><li>Regras</li><li>Relatórios</li><li>Perfil público</li></ul>
     </aside>
     <main class="pv-cc__main">
