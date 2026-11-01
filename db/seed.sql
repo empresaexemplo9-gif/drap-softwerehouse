@@ -1,7 +1,7 @@
 -- Gerado por scripts/gen-seed.mjs a partir de public/platforms.js. Não edite à mão.
 -- Idempotente: pode rodar de novo para restaurar o catálogo inicial.
 
-insert into public.platforms
+insert into platforms
   (id, name, code, category, tagline, summary, features, stack, status, palette,
    logo_svg, logo_url, preview_key, preview_image, url, repo, sort_order)
 values
@@ -19,7 +19,7 @@ on conflict (id) do update set
   preview_image = excluded.preview_image, url = excluded.url, repo = excluded.repo,
   sort_order = excluded.sort_order;
 
-insert into public.site_settings (key, value) values
+insert into site_settings (key, value) values
   ($q$contact_email$q$, $q$contato@drap.com.br$q$),
   ($q$contact_whatsapp$q$, $q$+55 (00) 00000-0000$q$),
   ($q$contact_hours$q$, $q$Seg–Sex · 09h–18h$q$)

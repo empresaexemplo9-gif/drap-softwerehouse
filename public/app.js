@@ -13,14 +13,13 @@
   });
   let platforms = window.DRAP_PLATFORMS || [];
   let settings = {};
-  if (api?.enabled) {
-    const [rows, sets] = await Promise.all([
-      api.select("platforms", "select=*&active=eq.true&order=sort_order.asc").catch(() => null),
-      api.select("site_settings", "select=key,value").catch(() => null),
-    ]);
-    if (Array.isArray(rows) && rows.length) platforms = rows.map(fromRow);
-    if (Array.isArray(sets)) settings = Object.fromEntries(sets.map((s) => [s.key, s.value]));
-  }
+  let online = false; // true quando o catálogo veio do banco (API funcionando)
+  try {
+    const data = await api.catalog();
+    if (Array.isArray(data?.platforms) && data.platforms.length) platforms = data.platforms.map(fromRow);
+    settings = data?.settings || {};
+    online = true;
+  } catch { /* API/banco indisponível: segue com o catálogo local */ }
   $$("[data-setting]").forEach((el) => { if (settings[el.dataset.setting]) el.textContent = settings[el.dataset.setting]; });
 
   /* ---------- utilidades de cor ---------- */
@@ -197,7 +196,6 @@ ${renderPreview(p)}
       ok = ok && valid;
     });
     if (!ok) return setStatus("err", "✕ verifique nome e e-mail");
-    if (form.elements.website.value) return setStatus("ok", "✓ solicitação registrada"); // honeypot: robôs param aqui
 
     const v = (n) => form.elements[n].value.trim() || null;
     const choice = v("platform");
@@ -210,16 +208,17 @@ ${renderPreview(p)}
       interest: isPlatform ? null : choice,
       message: v("message"),
       source: (utm || document.referrer || "direto").slice(0, 200),
+      website: form.elements.website.value, // campo-isca anti-robô (validado no servidor)
     };
 
-    if (!api?.enabled) {
+    if (!online) {
       setStatus("err", "✕ envio indisponível no momento. Fale conosco pelo e-mail ao lado.");
       return;
     }
     btn.disabled = true; btn.classList.add("is-loading");
     setStatus("", "› enviando…");
     try {
-      await api.insert("leads", lead);
+      await api.sendLead(lead);
       setStatus("ok", "✓ solicitação registrada. Retornaremos em até 24h úteis.");
       form.reset();
     } catch (err) {

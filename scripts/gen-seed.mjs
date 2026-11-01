@@ -1,4 +1,4 @@
-// Gera supabase/seed.sql a partir de public/platforms.js (fonte única do catálogo inicial).
+// Gera db/seed.sql a partir de public/platforms.js (fonte única do catálogo inicial).
 // Uso: npm run seed:gen
 import { readFileSync, writeFileSync } from "node:fs";
 import vm from "node:vm";
@@ -27,7 +27,7 @@ const settings = {
 const sql = `-- Gerado por scripts/gen-seed.mjs a partir de public/platforms.js. Não edite à mão.
 -- Idempotente: pode rodar de novo para restaurar o catálogo inicial.
 
-insert into public.platforms
+insert into platforms
   (id, name, code, category, tagline, summary, features, stack, status, palette,
    logo_svg, logo_url, preview_key, preview_image, url, repo, sort_order)
 values
@@ -40,9 +40,9 @@ on conflict (id) do update set
   preview_image = excluded.preview_image, url = excluded.url, repo = excluded.repo,
   sort_order = excluded.sort_order;
 
-insert into public.site_settings (key, value) values
+insert into site_settings (key, value) values
 ${Object.entries(settings).map(([k, v]) => `  (${q(k)}, ${q(v)})`).join(",\n")}
 on conflict (key) do nothing;
 `;
-writeFileSync(new URL("../supabase/seed.sql", import.meta.url), sql);
-console.log(`seed.sql: ${platforms.length} plataformas, ${Object.keys(settings).length} configurações`);
+writeFileSync(new URL("../db/seed.sql", import.meta.url), sql);
+console.log(`db/seed.sql: ${platforms.length} plataformas, ${Object.keys(settings).length} configurações`);

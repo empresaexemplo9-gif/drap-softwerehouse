@@ -1,9 +1,9 @@
-/* DRAP — Painel administrativo (Supabase Auth + RLS) */
+/* DRAP — Painel administrativo (API própria em /api/admin, sessão por cookie HttpOnly) */
 (() => {
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const cfg = window.DRAP_CONFIG || {};
+
 
   const show = (id) => ["view-login", "view-message", "view-app"].forEach((v) => ($("#" + v).hidden = v !== id));
   const message = (title, text, canLogout = false) => {
@@ -12,11 +12,19 @@
   let toastT;
   const toast = (txt) => { const t = $("#toast"); t.textContent = txt; t.classList.add("is-on"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("is-on"), 2200); };
 
-  if (!cfg.supabaseUrl || !cfg.supabaseAnonKey || !window.supabase) {
-    message("Supabase não configurado", "Defina SUPABASE_URL e SUPABASE_ANON_KEY nas variáveis de ambiente da Vercel e faça um novo deploy.");
-    return;
+
+  /* Chamada à API do painel. Sessão em cookie HttpOnly; 401 volta para o login. */
+  async function call(method, path, body) {
+    const res = await fetch(`/api/admin/${path}`, {
+      method, credentials: "same-origin",
+      headers: body ? { "Content-Type": "application/json" } : {},
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json().catch(() => null);
+    if (res.status === 401 && path !== "login") { show("view-login"); throw new Error(data?.error || "Sessão expirada."); }
+    if (!res.ok) throw Object.assign(new Error(data?.error || `Erro ${res.status}`), { status: res.status });
+    return data;
   }
-  const sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true } });
 
   const STATUS = { novo: "Novo", em_contato: "Em contato", proposta: "Proposta", ganho: "Ganho", perdido: "Perdido" };
   const fmtDate = (iso) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
@@ -26,26 +34,31 @@
 
   /* ---------------- autenticação ---------------- */
   async function boot() {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) return show("view-login");
-    const { data: isAdmin, error } = await sb.rpc("is_admin");
-    if (error) return message("Erro ao verificar acesso", error.message, true);
-    if (!isAdmin) return message("Sem acesso", `A conta ${session.user.email} não está cadastrada como administradora. Veja o README (seção "Criar o primeiro administrador").`, true);
-    $("#user-email").textContent = session.user.email;
+    let me;
+    try { me = await call("GET", "session"); }
+    catch (err) {
+      if (err.status === 503) return message("Painel não configurado", err.message);
+      return show("view-login");
+    }
+    $("#user-email").textContent = me.email;
     show("view-app");
-    await Promise.all([loadLeads(), loadPlatforms(), loadSettings()]);
+    await loadPlatforms();
+    await Promise.all([loadLeads(), loadSettings()]);
   }
 
   $("#login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const st = $("#login-status");
     st.className = "form__status mono"; st.textContent = "› entrando…";
-    const { error } = await sb.auth.signInWithPassword({ email: $("#l-email").value.trim(), password: $("#l-pass").value });
-    if (error) { st.className = "form__status mono err"; st.textContent = "✕ e-mail ou senha inválidos"; return; }
-    st.textContent = "";
-    boot();
+    try {
+      await call("POST", "login", { email: $("#l-email").value.trim(), password: $("#l-pass").value });
+      st.textContent = ""; $("#l-pass").value = "";
+      boot();
+    } catch (err) {
+      st.className = "form__status mono err"; st.textContent = `✕ ${err.message}`;
+    }
   });
-  const logout = async () => { await sb.auth.signOut(); show("view-login"); };
+  const logout = async () => { await call("POST", "logout").catch(() => {}); show("view-login"); };
   $("#logout").addEventListener("click", logout);
   $("#msg-logout").addEventListener("click", logout);
 
@@ -58,9 +71,8 @@
 
   /* ---------------- leads ---------------- */
   async function loadLeads() {
-    const { data, error } = await sb.from("leads").select("*").order("created_at", { ascending: false }).limit(1000);
-    if (error) return toast("Erro ao carregar leads: " + error.message);
-    leads = data; renderLeads();
+    try { leads = await call("GET", "leads"); renderLeads(); }
+    catch (err) { toast("Erro ao carregar leads: " + err.message); }
   }
   const platformName = (id) => platforms.find((p) => p.id === id)?.name || id || "";
 
@@ -94,8 +106,8 @@
   $("#lead-refresh").addEventListener("click", () => loadLeads().then(() => toast("Leads atualizados")));
 
   async function updateLead(id, patch) {
-    const { error } = await sb.from("leads").update(patch).eq("id", id);
-    if (error) return toast("Erro ao salvar: " + error.message);
+    try { await call("PATCH", `leads?id=${encodeURIComponent(id)}`, patch); }
+    catch (err) { return toast("Erro ao salvar: " + err.message); }
     Object.assign(leads.find((l) => l.id === id), patch);
     toast("Salvo");
   }
@@ -115,9 +127,8 @@
 
   /* ---------------- plataformas ---------------- */
   async function loadPlatforms() {
-    const { data, error } = await sb.from("platforms").select("*").order("sort_order");
-    if (error) return toast("Erro ao carregar plataformas: " + error.message);
-    platforms = data; renderPlatforms(); renderLeads();
+    try { platforms = await call("GET", "platforms"); renderPlatforms(); renderLeads(); }
+    catch (err) { toast("Erro ao carregar plataformas: " + err.message); }
   }
   function renderPlatforms() {
     $("#platform-list").innerHTML = platforms.map((p) => `
@@ -156,8 +167,8 @@
       palette: list(fd.get("palette"), ",").map((h) => h.toUpperCase()), url: fd.get("url").trim() || "#contato",
       sort_order: Number(fd.get("sort_order")) || 100, active: fd.get("active") === "on",
     };
-    const { error } = await sb.from("platforms").update(patch).eq("id", id);
-    if (error) return toast("Erro: " + error.message);
+    try { await call("PATCH", `platforms?id=${encodeURIComponent(id)}`, patch); }
+    catch (err) { return toast("Erro: " + err.message); }
     toast("Plataforma salva");
     loadPlatforms();
   });
@@ -169,20 +180,19 @@
     ["contact_hours", "Horário de atendimento"],
   ];
   async function loadSettings() {
-    const { data, error } = await sb.from("site_settings").select("key,value");
-    if (error) return toast("Erro ao carregar configurações: " + error.message);
-    const map = Object.fromEntries(data.map((s) => [s.key, s.value]));
+    let map;
+    try { map = await call("GET", "settings"); }
+    catch (err) { return toast("Erro ao carregar configurações: " + err.message); }
     $("#settings-form").innerHTML = SETTINGS.map(([k, label]) => `
       <div class="field"><label class="mono" for="s-${k}">${label}</label><input id="s-${k}" name="${k}" value="${esc(map[k] || "")}" maxlength="500" /></div>`).join("") +
       `<button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar</span><span class="btn__icon" aria-hidden="true">✓</span></button>`;
   }
   $("#settings-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const rows = SETTINGS.map(([k]) => ({ key: k, value: e.target.elements[k].value.trim() })).filter((r) => r.value);
-    const { error } = await sb.from("site_settings").upsert(rows);
-    toast(error ? "Erro: " + error.message : "Configurações salvas");
+    const body = Object.fromEntries(SETTINGS.map(([k]) => [k, e.target.elements[k].value.trim()]).filter(([, v]) => v));
+    try { await call("PUT", "settings", body); toast("Configurações salvas"); }
+    catch (err) { toast("Erro: " + err.message); }
   });
 
-  sb.auth.onAuthStateChange((evt) => { if (evt === "SIGNED_OUT") show("view-login"); });
   boot();
 })();

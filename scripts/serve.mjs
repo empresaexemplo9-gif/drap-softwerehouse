@@ -1,4 +1,5 @@
-// Servidor local simples para dist/ (imita cleanUrls da Vercel). Uso: npm run dev
+// Servidor local: arquivos de dist/ (com cleanUrls e cabeçalhos do vercel.json) e
+// funções de api/ executadas como na Vercel. Uso: npm run dev
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
@@ -12,7 +13,21 @@ const headersFor = (path) => Object.assign({}, ...vercel.headers
   .filter((h) => new RegExp("^" + h.source.replace("(.*)", ".*") + "$").test(path))
   .map((h) => Object.fromEntries(h.headers.filter((x) => x.key !== "Strict-Transport-Security").map((x) => [x.key, x.value]))));
 
+const apiRoot = new URL("../api/", import.meta.url).pathname;
+
 createServer(async (req, res) => {
+  const { pathname } = new URL(req.url, "http://x");
+  if (pathname.startsWith("/api/")) {
+    const name = pathname.slice(5).replace(/\/+$/, "");
+    if (!/^[a-z0-9/-]+$/i.test(name)) { res.writeHead(404).end(); return; }
+    try {
+      const mod = await import(join(apiRoot, name + ".js"));
+      return await mod.default(req, res);
+    } catch (e) {
+      if (e.code === "ERR_MODULE_NOT_FOUND") { res.writeHead(404, { "Content-Type": "application/json" }).end('{"error":"não encontrado"}'); return; }
+      console.error(e); res.writeHead(500).end(); return;
+    }
+  }
   let p = normalize(decodeURIComponent(new URL(req.url, "http://x").pathname)).replace(/^(\.\.[/\\])+/, "");
   const candidates = [p, p + ".html", join(p, "index.html")];
   for (const c of candidates) {

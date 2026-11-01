@@ -3,89 +3,76 @@
 Site de apresentação e marketing da DRAP, com:
 
 - **Home**: hero, catálogo das plataformas prontas (cards com prévia da interface, paleta e logo de cada uma), serviços, processo e contato. Tema claro (padrão) e escuro, visual vítreo.
-- **Captação de leads**: o formulário grava no Supabase, com validação no navegador e no banco, campo-isca anti-robô e limite de 5 envios por e-mail a cada 10 minutos.
-- **Painel `/admin`**: login pelo Supabase Auth. Mostra os leads com status, notas, busca, filtros e exportação CSV, permite editar o catálogo de plataformas e os contatos do site.
+- **Captação de leads**: o formulário grava no banco, com validação no navegador e no servidor, campo-isca anti-robô e limite de envios (5 por e-mail e 20 por IP a cada 10 minutos).
+- **Painel `/admin`**: mostra os leads com status, notas, busca, filtros e exportação CSV, permite editar o catálogo de plataformas e os contatos do site.
 
-Stack: HTML, CSS e JS sem framework · Supabase (Postgres + Auth + RLS) · Vercel (build estático).
+Stack: HTML, CSS e JS sem framework · funções serverless da Vercel (`/api`) · **Neon Postgres** (criado pela própria Vercel).
 
 ```
 public/                 site e painel (copiados para dist/ no build)
-  index.html, styles.css, app.js
-  api.js                cliente REST mínimo do Supabase (site público)
+  index.html, styles.css, app.js, api.js
   platforms.js          catálogo de reserva + fonte do seed inicial
   previews.js           miniaturas da interface de cada plataforma
   admin/                painel administrativo
-supabase/
-  migrations/           esquema, RLS e funções
-  seed.sql              catálogo inicial (gerado por npm run seed:gen)
-scripts/
-  build.mjs             gera dist/ e dist/config.js a partir das variáveis de ambiente
-  serve.mjs             servidor local (aplica os cabeçalhos do vercel.json)
-  gen-seed.mjs          gera supabase/seed.sql a partir de public/platforms.js
+api/                    funções serverless (Node) — únicas com acesso ao banco
+  catalog.js            GET  catálogo e contatos (público, cache de 60 s na CDN)
+  leads.js              POST pedido de demonstração (público)
+  admin/                login, logout, session, leads, platforms, settings
+lib/                    banco (pg), HTTP e sessão (cookie assinado)
+db/
+  migrations/           esquema SQL (aplicado automaticamente no build)
+  seed.sql              catálogo inicial (carregado só se a tabela estiver vazia)
+scripts/                build, migração, servidor local, gerador do seed
 vercel.json             build, URLs limpas e cabeçalhos de segurança (CSP)
 ```
 
-## 1. Supabase
+## Publicar na Vercel (com Neon)
 
-1. Crie um projeto em [supabase.com](https://supabase.com) (região São Paulo, `sa-east-1`).
-2. Em **SQL Editor**, rode na ordem:
-   1. `supabase/migrations/20261101000000_init.sql`
-   2. `supabase/seed.sql`
+1. **Importar o projeto**: Vercel → **Add New → Project** → importe `empresaexemplo9-gif/drap-softwerehouse`. O `vercel.json` já define o build. Deixe o framework como *Other*.
+2. **Criar o banco**: no projeto, abra **Storage → Create Database → Neon (Serverless Postgres)** → região **São Paulo (AWS sa-east-1)** → **Connect** ao projeto, marcando Production e Preview.
+   A Vercel cria `DATABASE_URL` sozinha. Nenhum SQL manual é necessário: as tabelas e o catálogo são criados no próximo build.
+3. **Variáveis do painel**: em **Settings → Environment Variables**, cadastre:
 
-   Ou, com a CLI: `supabase link --project-ref <ref>` e depois `supabase db push`. Rode o `seed.sql` no SQL Editor.
-3. **Criar o primeiro administrador**:
-   - Em **Authentication → Users → Add user**, crie o usuário com e-mail e senha e marque *Auto Confirm User*.
-   - No SQL Editor, rode:
-     ```sql
-     insert into public.admins (user_id)
-     select id from auth.users where email = 'seu-email@empresa.com';
-     ```
-4. Recomendado: em **Authentication → Sign In / Providers**, desligue *Allow new users to sign up*. O painel não tem cadastro público. Mesmo assim, uma conta nova não vê nada se não estiver em `admins`.
-5. Em **Project Settings → API**, copie a **Project URL** e a chave **anon / publishable**.
+   | Variável | Valor |
+   |---|---|
+   | `ADMIN_EMAIL` | e-mail de login do painel |
+   | `ADMIN_PASSWORD` | senha forte (16+ caracteres) |
+   | `SESSION_SECRET` | texto aleatório com 32+ caracteres |
 
-### Segurança (RLS)
+   Para gerar o `SESSION_SECRET`: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`, ou use qualquer gerador de senhas.
+4. **Deploy**: em **Deployments → Redeploy**, ou faça um push na `main`. O log do build mostra `migrate: aplicada 001_init.sql`.
+5. Acesse `/admin` e entre com o e-mail e a senha do passo 3.
 
-| Tabela | Visitante (anon) | Admin |
-|---|---|---|
-| `platforms` | lê as ativas | lê, cria, edita, remove |
-| `site_settings` | lê | lê e edita |
-| `leads` | **só insere** (sem status ou notas; não lê) | lê, edita, remove |
-| `admins` | nada | lê |
+Depois disso, cada push na `main` publica automaticamente, e cada pull request ganha uma URL de prévia.
 
-A chave anon vai para o navegador, e isso é esperado: a proteção vem das políticas acima. **Nunca** use a chave `service_role` no site; o build recusa se ela for informada por engano.
+> Sem `DATABASE_URL`, o site continua no ar com o catálogo local e o formulário mostra um aviso. Sem as variáveis do passo 3, o painel avisa o que falta configurar.
 
-## 2. GitHub
+## Segurança
 
-```bash
-git remote add origin https://github.com/<conta>/<repositorio>.git
-git push -u origin main
-```
-
-## 3. Vercel
-
-1. **Add New → Project**, importe o repositório do GitHub. O `vercel.json` já define o build (`npm run build`) e a saída (`dist`). Não escolha framework.
-2. Em **Settings → Environment Variables** (Production e Preview):
-   - `SUPABASE_URL` = Project URL
-   - `SUPABASE_ANON_KEY` = chave anon / publishable
-
-   A integração oficial Supabase ↔ Vercel também funciona: o build aceita `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-3. Faça o deploy. Cada push na `main` publica automaticamente, e cada pull request ganha uma prévia.
-4. Opcional: em **Settings → Domains**, adicione o domínio da empresa.
-
-Depois do deploy, acesse `/admin` com o usuário criado no passo 1.3.
+- **Banco:** a connection string do banco só existe no servidor. O navegador fala apenas com `/api`.
+- **Painel:**
+  - a sessão fica num cookie `HttpOnly`, `Secure`, `SameSite=Strict`, assinado com HMAC, e vale por 8 horas;
+  - trocar `ADMIN_EMAIL` ou `SESSION_SECRET` derruba as sessões abertas;
+  - depois de 8 tentativas de login erradas, aquele IP fica bloqueado por 15 minutos.
+- **Requisições de outros sites:** gravações vindas de outra origem são recusadas (verificação do `Origin`).
+- **CSP restritiva:** sem scripts inline e com conexões apenas para o próprio domínio.
 
 ## Desenvolvimento local
 
+Requisitos: Node 20+ e um Postgres. Pode ser um banco de desenvolvimento do próprio Neon, criado como uma *branch* no painel do Neon.
+
 ```bash
 npm install
-cp .env.example .env    # preencha, ou exporte as variáveis no shell
-export $(grep -v '^#' .env | xargs) && npm run dev   # http://localhost:4173
+cp .env.example .env          # preencha DATABASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD, SESSION_SECRET
+set -a && . ./.env && set +a
+npm run dev                   # aplica migrações, gera dist/ e abre http://localhost:4173
 ```
 
-Sem as variáveis, o site funciona com o catálogo local (`public/platforms.js`) e o formulário fica desativado com aviso.
+O servidor local executa as funções de `api/` como a Vercel e aplica os mesmos cabeçalhos do `vercel.json`.
 
 ## Editar conteúdo
 
-- **Plataformas e contatos**: pelo painel `/admin`. As mudanças aparecem na hora.
-- **Prévia de uma plataforma**: as miniaturas ficam em `public/previews.js`, numa função por plataforma. Para usar um screenshot real, preencha `preview_image` na tabela `platforms` com o caminho da imagem, por exemplo `/assets/previews/tela.png`, colocando o arquivo em `public/assets/previews/`.
-- **Nova plataforma**: insira a linha em `platforms` (SQL Editor ou Table Editor). Para a prévia, adicione uma função com o mesmo `id` em `previews.js`, ou use `preview_image`.
+- **Plataformas e contatos**: pelo painel `/admin`. As mudanças aparecem no site em até 1 minuto, por causa do cache da CDN.
+- **Prévia de uma plataforma**: as miniaturas ficam em `public/previews.js`, numa função por plataforma. Para usar um screenshot real, coloque a imagem em `public/assets/previews/` e preencha a coluna `preview_image` da plataforma, por exemplo `/assets/previews/tela.png`.
+- **Nova plataforma**: insira a linha na tabela `platforms`, pelo editor SQL do Neon. Para a prévia, adicione uma função com o mesmo `id` em `previews.js`.
+- **Mudar o esquema**: crie `db/migrations/002_*.sql`. Ele é aplicado uma única vez no próximo deploy.
