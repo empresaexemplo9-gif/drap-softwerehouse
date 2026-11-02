@@ -40,7 +40,7 @@ vercel.json             build, URLs limpas e cabeçalhos de segurança (CSP)
 
 1. **Importar o projeto**: Vercel → **Add New → Project** → importe `empresaexemplo9-gif/drap-softwerehouse`. O `vercel.json` já define o build. Deixe o framework como *Other*.
 2. **Criar o banco**: no projeto, abra **Storage → Create Database → Neon (Serverless Postgres)** → região **São Paulo (AWS sa-east-1)** → **Connect** ao projeto, marcando Production e Preview.
-   A Vercel cria `DATABASE_URL` sozinha. Nenhum SQL manual é necessário: as tabelas e o catálogo são criados no próximo build.
+   A Vercel cria `DATABASE_URL` sozinha (se você usar "Custom Prefix", como `drapsoftwerehouse_DATABASE_URL`, o site também reconhece). Nenhum SQL manual é necessário: as tabelas e o catálogo são criados no próximo build.
 3. **Variáveis do painel**: em **Settings → Environment Variables**, cadastre:
 
    | Variável | Valor |
