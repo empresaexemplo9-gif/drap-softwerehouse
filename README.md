@@ -59,6 +59,12 @@ Depois disso, cada push na `main` publica automaticamente, e cada pull request g
 
 > Sem `DATABASE_URL`, o site continua no ar com o catálogo local e o formulário mostra um aviso. Sem as variáveis do passo 3, o painel avisa o que falta configurar.
 
+## Se o questionário mostrar erro de banco
+
+- **"Banco de dados não configurado neste ambiente"**: o deploy não tem `DATABASE_URL`. Prévias de branch usam o ambiente **Preview**: em Storage → Neon → **Connect Project**, marque Production **e** Preview, e faça Redeploy.
+- **Tabelas novas ausentes**: não é preciso fazer nada. Se o build não migrou, a primeira requisição aplica as migrações de `db/migrations` e repete a operação.
+- O painel `/admin` mostra um aviso vermelho quando o banco do ambiente está ausente ou inacessível.
+
 ## Segurança
 
 - **Banco:** a connection string do banco só existe no servidor. O navegador fala apenas com `/api`.

@@ -2,7 +2,7 @@
 // aplica as migrações do banco. As funções em /api são publicadas pela Vercel à parte.
 import { cpSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { migrate } from "./migrate.mjs";
+import { migrate } from "../lib/migrate.js";
 import { getPool, databaseUrl } from "../lib/db.js";
 
 const root = new URL("..", import.meta.url).pathname;

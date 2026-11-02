@@ -54,6 +54,9 @@ export default handler(["GET", "POST"], async (req, res) => {
   if (!pl && brief.description.length < 30) throw httpError(400, "Descreva a plataforma com pelo menos 30 caracteres.");
   brief.company_size = str(c.company_size, 40) || brief.company_size;
 
+  // Confere o esquema antes de gravar qualquer coisa (se faltar coluna, o handler migra e repete sem duplicar o lead)
+  await query("select platform_id, platform from proposals limit 0");
+
   // Limite anti-spam: 3 por e-mail e 10 por IP a cada hora
   const ip = clientIpHash(req);
   const { rows: [lim] } = await query(

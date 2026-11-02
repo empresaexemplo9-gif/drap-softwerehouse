@@ -242,6 +242,8 @@
     try {
       const res = await fetch("/api/briefs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 503 || res.status >= 500)
+        throw new Error("Não conseguimos gerar a proposta agora por uma instabilidade do nosso lado. Suas respostas ficaram salvas neste navegador: tente de novo em alguns minutos ou fale com a gente pelo contato do site.");
       if (!res.ok) throw new Error(data.error || "Não foi possível enviar agora. Tente novamente.");
       try { localStorage.removeItem(DRAFT); } catch {}
       done(data, payload.contact);

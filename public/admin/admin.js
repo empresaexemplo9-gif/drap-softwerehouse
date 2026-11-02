@@ -42,6 +42,13 @@
     }
     $("#user-email").textContent = me.email;
     show("view-app");
+    // Aviso de ambiente: banco ausente ou inacessível
+    const warn = $("#env-warn");
+    if (me.db && !me.db.ok) {
+      warn.hidden = false;
+      warn.innerHTML = `<b>Banco de dados com problema neste ambiente (${esc(me.env)}).</b> ${esc(me.db.problem)}
+        Na Vercel: Storage → Neon → Connect Project, marcando <b>Production</b> e <b>Preview</b>; depois Deployments → Redeploy.`;
+    } else warn.hidden = true;
     await loadPlatforms();
     await Promise.all([loadLeads(), loadSettings()]);
     document.dispatchEvent(new CustomEvent("drap:admin-ready"));
