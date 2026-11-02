@@ -11,7 +11,7 @@ import { requireAdmin } from "../../lib/auth.js";
 import { USERS, adminCatalog, publicCatalog, estimate, normalizeBrief, totalsOf } from "../../lib/pricing.js";
 import { newToken, DEFAULT_TERMS, cleanItems, deliverProposal, proposalUrl } from "../../lib/proposals.js";
 import { mailConfigured } from "../../lib/mail.js";
-import { platformProposal, PLATFORM_TERMS } from "../../lib/platform-plans.js";
+import { platformProposal, platformEstimate, PLATFORM_TERMS } from "../../lib/platform-plans.js";
 
 async function platformRow(id) {
   const { rows: [pl] } = await query("select * from platforms where id = $1", [String(id)]);
@@ -86,7 +86,7 @@ export default handler(["GET", "POST", "PATCH"], async (req, res) => {
       return send(res, 200, { ok: true, url, ...withUrl(req, await get(id)) });
     }
     if (action === "reprice" && p.platform_id) {
-      const pp = platformProposal(await platformRow(p.platform_id), { users: p.brief?.users, company: p.client_company || p.client_name });
+      const pp = platformEstimate(await platformRow(p.platform_id), { users: "11-50", ...(p.brief || {}), description: "" }, p.client_company || p.client_name);
       const { rows: [u] } = await query(`update proposals set items = $2, weeks = $3, platform = $4 where id = $1 returning *`,
         [id, JSON.stringify(pp.items), pp.weeks, JSON.stringify(pp.platform)]);
       return send(res, 200, withUrl(req, u));

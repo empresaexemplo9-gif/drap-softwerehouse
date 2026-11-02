@@ -47,7 +47,7 @@
   </header>
 
   <main class="container sm">
-    <header class="sm-head">
+    <header class="sm-head" id="sm-head">
       <div class="section__index mono"><span>SM</span> / Plataforma sob medida</div>
       <h1 class="section__title">Conte a ferramenta que a sua empresa <span class="serif">precisa.</span></h1>
       <p class="section__lead">Leva cerca de 5 minutos. Com as respostas, a DRAP monta uma proposta com escopo, módulos, cronograma e investimento.
@@ -83,13 +83,13 @@
         <!-- 2. Projeto -->
         <fieldset class="sm-step" data-step="1" data-title="O projeto" hidden>
           <legend><span class="mono">02</span>O projeto</legend>
-          <p class="sm-q">Que tipo de plataforma você imagina?</p>
-          <div class="sm-choices" id="b-type" data-name="type"></div>
-          <div class="field"><label class="mono" for="b-name">nome do projeto (opcional)</label><input id="b-name" name="project_name" maxlength="80" placeholder="Ex.: Portal Clínica Vida" /></div>
+          <p class="sm-q" data-custom-only>Que tipo de plataforma você imagina?</p>
+          <div class="sm-choices" id="b-type" data-name="type" data-custom-only></div>
+          <div class="field" data-custom-only><label class="mono" for="b-name">nome do projeto (opcional)</label><input id="b-name" name="project_name" maxlength="80" placeholder="Ex.: Portal Clínica Vida" /></div>
           <div class="field">
-            <label class="mono" for="b-desc">descreva a ferramenta *</label>
+            <label class="mono" for="b-desc" id="b-desc-label">descreva a ferramenta *</label>
             <textarea id="b-desc" name="description" rows="6" maxlength="3000" required placeholder="O que a plataforma precisa fazer? Quem vai usar? Quais etapas do dia a dia ela deve resolver?"></textarea>
-            <small class="sm-count mono"><span id="b-desc-count">0</span>/3000 · mínimo 30</small>
+            <small class="sm-count mono"><span id="b-desc-count">0</span>/3000<span id="b-desc-min"> · mínimo 30</span></small>
           </div>
           <p class="sm-q">Como isso é feito hoje?</p>
           <div class="sm-choices sm-choices--sm" id="b-current" data-name="current"></div>
@@ -100,8 +100,8 @@
         <!-- 3. Onde roda -->
         <fieldset class="sm-step" data-step="2" data-title="Usuários e acesso" hidden>
           <legend><span class="mono">03</span>Quem usa e onde</legend>
-          <p class="sm-q">A versão web (computador e celular pelo navegador) já está incluída. Precisa também de:</p>
-          <div class="sm-cards" id="b-targets" data-name="targets"></div>
+          <p class="sm-q" data-custom-only>A versão web (computador e celular pelo navegador) já está incluída. Precisa também de:</p>
+          <div class="sm-cards" id="b-targets" data-name="targets" data-custom-only></div>
           <p class="sm-q">Quantas pessoas vão usar a plataforma? <small>(equipe + clientes com login)</small></p>
           <div class="sm-choices sm-choices--sm" id="b-users" data-name="users"></div>
         </fieldset>
@@ -109,14 +109,14 @@
         <!-- 4. Funcionalidades -->
         <fieldset class="sm-step" data-step="3" data-title="Funcionalidades" hidden>
           <legend><span class="mono">04</span>Funcionalidades principais</legend>
-          <p class="sm-q">Login, perfis de acesso, cadastros e painel administrativo já fazem parte do núcleo. Marque o que mais a plataforma deve ter:</p>
+          <p class="sm-q" id="b-features-q">Login, perfis de acesso, cadastros e painel administrativo já fazem parte do núcleo. Marque o que mais a plataforma deve ter:</p>
           <div class="sm-cards" id="b-features" data-name="features"></div>
         </fieldset>
 
         <!-- 5. Módulos -->
         <fieldset class="sm-step" data-step="4" data-title="Integrações" hidden>
           <legend><span class="mono">05</span>Módulos e integrações</legend>
-          <p class="sm-q">Indique o que precisa <b>agora</b> e o que pode ficar para <b>depois</b>. Cada módulo aparece com valor próprio na proposta.</p>
+          <p class="sm-q" id="b-modules-q">Indique o que precisa <b>agora</b> e o que pode ficar para <b>depois</b>. Cada módulo aparece com valor próprio na proposta.</p>
           <div class="sm-mods" id="b-modules"></div>
         </fieldset>
 

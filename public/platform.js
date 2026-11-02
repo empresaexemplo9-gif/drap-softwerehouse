@@ -84,7 +84,8 @@
         <p class="pd-hero__headline serif">${esc(d?.headline || p.tagline)}</p>
         <p class="pd-hero__lead">${esc(d?.lead || p.summary)}</p>
         <div class="hero__cta">
-          <a href="#demo" class="btn btn--primary"><span class="btn__label">Solicitar demonstração</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a href="/plataformas/${esc(p.id)}/proposta" class="btn btn--primary"><span class="btn__label">Receber proposta</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a href="#demo" class="btn btn--ghost"><span class="btn__label">Solicitar demonstração</span></a>
           ${isExternal(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener" class="btn btn--ghost"><span class="btn__label">Ver plataforma ao vivo</span><span class="btn__kbd mono">↗</span></a>` : ""}
         </div>
         <div class="stack pd-stack">${p.stack.map((s) => `<span>${esc(s)}</span>`).join("")}</div>
@@ -144,6 +145,24 @@
 
     ${d ? section("06", "Perguntas frequentes", `Antes de <span class="serif">decidir</span>`, `
       <div class="pd-faq">${d.faq.map((f) => `<details class="pd-card"><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("")}</div>`) : ""}
+
+    <section class="container pd-sec" id="proposta">
+      <div class="pd-quote reveal">
+        <div class="pd-quote__copy">
+          <div class="section__index mono"><span>$</span> / Proposta automática</div>
+          <h2 class="section__title">Receba a proposta do ${esc(p.name)} <span class="serif">em 3 minutos.</span></h2>
+          <p class="section__lead">Responda algumas perguntas sobre a sua operação, escolha os módulos extras e receba na hora a proposta com implantação,
+            licença mensal, cronograma e investimento, na identidade do ${esc(p.name)}. Por link, PDF ou e-mail.</p>
+          <a href="/plataformas/${esc(p.id)}/proposta" class="btn btn--primary"><span class="btn__label">Montar minha proposta</span><span class="btn__icon" aria-hidden="true">→</span></a>
+        </div>
+        <ol class="pd-quote__steps mono">
+          <li><b>01</b>Sobre a sua empresa</li>
+          <li><b>02</b>Quantas pessoas vão usar</li>
+          <li><b>03</b>Prioridades e módulos extras</li>
+          <li><b>04</b>Proposta pronta, com valores</li>
+        </ol>
+      </div>
+    </section>
 
     <section class="container pd-sec" id="demo">
       <div class="cta reveal">

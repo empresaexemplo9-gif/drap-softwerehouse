@@ -1239,3 +1239,17 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
 /* Menu com 5 itens: sem quebra de linha; o indicador de status sai antes de apertar */
 .nav__links a, .nav__actions .btn__label { white-space: nowrap; }
 @media (max-width: 1360px) { .nav .sys-status { display: none; } }
+
+/* Página da plataforma: bloco "Proposta automática" (questionário da plataforma) */
+.pd-quote { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; padding: 44px; border-radius: 22px; position: relative; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--c) 35%, var(--glass-line)); box-shadow: var(--glass-shadow);
+  background: radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--c) 16%, transparent), transparent 60%), linear-gradient(135deg, var(--glass-sheen), transparent 45%), var(--glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(var(--glass-sat)); backdrop-filter: blur(24px) saturate(var(--glass-sat)); }
+.pd-quote::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 3px; background: var(--c); }
+.pd-quote .section__title { margin: 14px 0 14px; }
+.pd-quote .section__lead { margin-bottom: 26px; }
+.pd-quote__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 13px; }
+.pd-quote__steps li { display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 12px; background: var(--glass-bg-soft); border: 1px solid var(--glass-line); color: var(--text-dim); }
+.pd-quote__steps b { color: var(--c-strong, var(--accent-text)); font-weight: 500; }
+:root[data-theme="dark"] .pd-quote__steps b { color: var(--c-soft, var(--accent-text)); }
+@media (max-width: 920px) { .pd-quote { grid-template-columns: 1fr; padding: 28px 22px; } }

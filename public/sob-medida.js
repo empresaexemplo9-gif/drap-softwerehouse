@@ -19,19 +19,66 @@
   $("#year").textContent = new Date().getFullYear();
 
   /* ---------- opções (da API; reserva local se ela estiver fora) ---------- */
+  // Modo plataforma: /plataformas/<id>/proposta (ou ?plataforma=<id>) usa os módulos e as cores do produto
+  const PID = (location.pathname.match(/\/plataformas\/([a-z0-9-]{2,40})\/proposta/) || [])[1] || new URLSearchParams(location.search).get("plataforma") || "";
   let C;
   try {
-    const r = await fetch("/api/briefs");
+    const r = await fetch(PID ? `/api/briefs?platform=${encodeURIComponent(PID)}` : "/api/briefs");
     if (!r.ok) throw new Error();
     C = await r.json();
+    if (PID && !C.platform) throw new Error();
   } catch {
     $("#sm-form").innerHTML = `<div class="sm-offline"><h2>Questionário indisponível no momento</h2>
       <p>Não conseguimos carregar as opções agora. Tente de novo em alguns minutos ou fale com a gente pelo <a href="/#contato">formulário de contato</a>.</p></div>`;
     return;
   }
 
-  const DRAFT = "drap-brief-draft";
-  const state = { type: "gestao", current: null, goals: [], targets: [], users: "ate-10", features: [], modules: {}, deadline: "1-3" };
+  const PF = C.platform || null;
+  const DRAFT = PF ? `drap-brief-${PF.id}` : "drap-brief-draft";
+  const state = { type: "gestao", current: null, goals: [], targets: [], users: PF ? "11-50" : "ate-10", features: [], priorities: [], modules: {}, deadline: "1-3" };
+
+  if (PF) {
+    // tema da plataforma (paleta oficial dela) mantendo a marca DRAP no topo e no rodapé
+    const rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+    const lum = (h) => { const [r, g, b] = rgb(h); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; };
+    const soft = (h) => { let c = rgb(h); while ((0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255 < 0.62) c = c.map((v) => v + (255 - v) * 0.18); return `rgb(${c.map(Math.round).join(",")})`; };
+    const pal = PF.palette.filter((h) => /^#[0-9a-f]{6}$/i.test(h));
+    const primary = pal[0], second = pal.slice(1).find((h) => lum(h) > 0.15 && lum(h) < 0.85) || primary;
+    const b = document.body;
+    b.classList.add("is-platform");
+    b.style.setProperty("--pf", lum(primary) > 0.55 ? "#121419" : primary);
+    b.style.setProperty("--pf-soft", soft(primary));
+    b.style.setProperty("--pf-2", second);
+    document.title = `Proposta ${PF.name} · DRAP SoftwareHouse & Business`;
+    $('meta[name="description"]')?.setAttribute("content", `Responda algumas perguntas e receba a proposta do ${PF.name} com módulos, prazo e investimento.`);
+    $("#sm-head").innerHTML = `
+      <div class="section__index mono"><span>${esc(PF.name.replace(/^DRAP\s*/i, "").slice(0, 3).toUpperCase())}</span> / Proposta da plataforma</div>
+      <div class="sm-plat"><span class="sm-plat__logo">${PF.logo_svg || ""}</span><span><small class="mono">${esc(PF.category)}</small><b>${esc(PF.name)}</b></span></div>
+      <h1 class="section__title">Receba a proposta do ${esc(PF.name.replace(/^DRAP\s*/i, "DRAP "))} <span class="serif">para a sua empresa.</span></h1>
+      <p class="section__lead">${esc(PF.headline)} Responda algumas perguntas (cerca de 3 minutos) e receba a proposta com implantação, licença, módulos adicionais e cronograma.
+        Na maioria dos casos ela sai na hora; operações maiores passam pela análise da nossa equipe.</p>
+      <a class="sm-back mono" href="/plataformas/${esc(PF.id)}">← conhecer o ${esc(PF.name)}</a>`;
+    $$("[data-custom-only]").forEach((el) => (el.hidden = true));
+    $('.nav__links [aria-current]')?.classList.remove("is-active");
+    $('[data-step="1"]').dataset.title = "Sua operação";
+    $('[data-step="1"] legend').innerHTML = `<span class="mono">02</span>Sua operação hoje`;
+    $("#b-desc-label").textContent = "como funciona a sua operação hoje? (opcional)";
+    $("#b-desc").removeAttribute("required");
+    $("#b-desc").placeholder = `Ex.: quantas pessoas trabalham, o que vocês usam hoje e o que mais atrapalha. Isso ajuda a ajustar a proposta do ${PF.name}.`;
+    $("#b-desc-min").textContent = " · opcional";
+    $('[data-step="2"]').dataset.title = "Equipe";
+    $('[data-step="2"] legend').innerHTML = `<span class="mono">03</span>Quem vai usar`;
+    $('[data-step="3"]').dataset.title = "O que já vem";
+    $('[data-step="3"] legend').innerHTML = `<span class="mono">04</span>O que já vem no ${esc(PF.name)}`;
+    $("#b-features-q").innerHTML = `Tudo isto já está incluso. Marque o que é <b>prioridade</b> para você: usamos isso para organizar a implantação e o treinamento.`;
+    $("#b-features").dataset.name = "priorities";
+    $('[data-step="4"]').dataset.title = "Módulos extras";
+    $('[data-step="4"] legend').innerHTML = `<span class="mono">05</span>Módulos e integrações extras`;
+    $("#b-modules-q").innerHTML = `Além do que já vem no ${esc(PF.name)}, estes módulos podem ser adicionados. Indique o que precisa <b>agora</b> e o que pode ficar para <b>depois</b>: cada um aparece com valor próprio na proposta.`;
+  }
+  // chaves das prioridades → nomes dos módulos incluídos
+  const INCLUDED = PF ? Object.fromEntries(PF.included.map((m, i) => [`p${i}`, m])) : {};
+  const MODS = PF ? PF.optional : C.modules;
 
   const choice = (el, dict, multi) => {
     el.innerHTML = Object.entries(dict).map(([k, v]) =>
@@ -66,9 +113,9 @@
   choice($("#b-users"), C.users);
   choice($("#b-deadline"), C.deadlines);
   cards($("#b-targets"), C.targets);
-  cards($("#b-features"), C.features);
+  cards($("#b-features"), PF ? INCLUDED : C.features);
 
-  $("#b-modules").innerHTML = Object.entries(C.modules).map(([k, v]) => `
+  $("#b-modules").innerHTML = Object.entries(MODS).map(([k, v]) => `
     <div class="sm-mod" data-key="${esc(k)}">
       <span class="sm-card__ic">${icon(v.icon)}</span>
       <span class="sm-card__tx"><b>${esc(v.name)}</b><small>${esc(v.description)}</small></span>
@@ -124,7 +171,7 @@
       if (f.name.value.trim().length < 2) return [f.name, "Informe seu nome."];
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value.trim())) return [f.email, "Informe um e-mail válido."];
     }
-    if (i === 1 && f.description.value.trim().length < 30) return [f.description, "Descreva a ferramenta com pelo menos 30 caracteres."];
+    if (i === 1 && !PF && f.description.value.trim().length < 30) return [f.description, "Descreva a ferramenta com pelo menos 30 caracteres."];
     if (i === 5 && !$("#b-consent").checked) return [$("#b-consent"), "Marque a autorização para receber a proposta."];
     return null;
   }
@@ -151,6 +198,18 @@
   function summary() {
     const mods = Object.entries(state.modules);
     const list = (keys, dict) => keys.map((k) => dict[k]?.name).filter(Boolean).join(", ") || "—";
+    if (PF) {
+      $("#sm-summary").innerHTML = `
+      <h3 class="mono">Resumo do pedido</h3>
+      <dl>
+        <div><dt>Plataforma</dt><dd>${esc(PF.name)}</dd></div>
+        <div><dt>Usuários</dt><dd>${esc(C.users[state.users])}</dd></div>
+        <div><dt>Prioridades</dt><dd>${esc(list(state.priorities, INCLUDED))}</dd></div>
+        <div><dt>Módulos agora</dt><dd>${esc(list(mods.filter(([, v]) => v === "agora").map(([k]) => k), MODS))}</dd></div>
+        <div><dt>Módulos depois</dt><dd>${esc(list(mods.filter(([, v]) => v === "futuro").map(([k]) => k), MODS))}</dd></div>
+      </dl>`;
+      return;
+    }
     $("#sm-summary").innerHTML = `
       <h3 class="mono">Resumo do pedido</h3>
       <dl>
@@ -171,11 +230,13 @@
 
     const f = form.elements, btn = $("#sm-next");
     const payload = {
+      ...(PF ? { platform_id: PF.id } : {}),
       website: f.website.value,
       consent: $("#b-consent").checked,
       contact: { name: f.name.value.trim(), email: f.email.value.trim(), company: f.company.value.trim(), phone: f.phone.value.trim(), company_size: f.company_size.value },
       brief: { ...state, segment: f.segment.value, project_name: f.project_name.value.trim(), description: f.description.value.trim(),
-        budget: f.budget.value, references: f.references.value.trim(), notes: f.notes.value.trim() },
+        budget: f.budget.value, references: f.references.value.trim(), notes: f.notes.value.trim(),
+        priorities: state.priorities.map((k) => INCLUDED[k]?.name).filter(Boolean) },
     };
     btn.classList.add("is-loading"); btn.disabled = true; status("› analisando o seu projeto…");
     try {
@@ -196,14 +257,14 @@
     el.innerHTML = r.url ? `
       <span class="sm-done__ic">${icon("rocket")}</span>
       <p class="mono sm-done__k">PROPOSTA ${esc(r.number || "")}</p>
-      <h2>${first}, sua proposta está pronta.</h2>
-      <p>Analisamos as respostas e o projeto se encaixa no nosso escopo padrão. A proposta já tem escopo, módulos opcionais, cronograma e investimento${r.emailed ? `, e uma cópia foi enviada para <b>${esc(contact.email)}</b>` : ""}.</p>
+      <h2>${first}, sua proposta ${PF ? `do ${esc(PF.name)} ` : ""}está pronta.</h2>
+      <p>${PF ? `Montamos a proposta com os módulos que você escolheu, na identidade do ${esc(PF.name)}.` : "Analisamos as respostas e o projeto se encaixa no nosso escopo padrão."} A proposta já tem escopo, módulos opcionais, cronograma e investimento${r.emailed ? `, e uma cópia foi enviada para <b>${esc(contact.email)}</b>` : ""}.</p>
       <a class="btn btn--primary" href="${esc(r.url)}"><span class="btn__label">Abrir minha proposta</span><span class="btn__icon" aria-hidden="true">→</span></a>`
     : `
       <span class="sm-done__ic">${icon("clock")}</span>
       <p class="mono sm-done__k">PEDIDO ${esc(r.number || "RECEBIDO")}</p>
       <h2>Obrigado, ${first}. Recebemos o seu projeto.</h2>
-      <p>Pelo tamanho e pelas integrações, a sua plataforma merece uma análise da nossa equipe técnica. Vamos revisar o escopo e enviar a proposta para <b>${esc(contact.email)}</b> em até 2 dias úteis.</p>
+      <p>Pelo tamanho e pelas integrações, ${PF ? `a implantação do ${esc(PF.name)} na sua empresa` : "a sua plataforma"} merece uma análise da nossa equipe técnica. Vamos revisar o escopo e enviar a proposta para <b>${esc(contact.email)}</b> em até 2 dias úteis.</p>
       <a class="btn btn--ghost" href="/"><span class="btn__label">Voltar ao site</span></a>`;
     el.hidden = false;
     scrollTo({ top: 0, behavior: "smooth" });
