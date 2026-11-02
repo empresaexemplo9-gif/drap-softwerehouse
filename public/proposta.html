@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Proposta comercial · DRAP SoftwareHouse &amp; Business</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <meta name="theme-color" content="#024C5E" />
+  <link rel="stylesheet" href="/proposta.css" />
+</head>
+<body class="pp">
+  <!-- Marca d'água: símbolo oficial DRAP (repete em todas as páginas do PDF) -->
+  <div class="pp-wm" aria-hidden="true">
+    <svg viewBox="0 0 778 781"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg>
+  </div>
+
+  <div class="pp-bar" id="pp-bar" hidden>
+    <a class="pp-bar__brand" href="/" aria-label="DRAP SoftwareHouse & Business">
+      <svg viewBox="0 0 778 781" aria-hidden="true"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg>
+      <span>DRAP</span>
+    </a>
+    <span class="pp-bar__num" id="pp-num"></span>
+    <div class="pp-bar__act">
+      <button type="button" class="pp-btn pp-btn--ghost" id="pp-copy">Copiar link</button>
+      <button type="button" class="pp-btn pp-btn--ghost" id="pp-pdf">Baixar PDF</button>
+      <a class="pp-btn pp-btn--gold" href="#aceite" id="pp-go-accept">Aceitar proposta</a>
+    </div>
+  </div>
+
+  <main id="pp" class="pp-doc" aria-busy="true">
+    <div class="pp-loading"><span></span>Carregando proposta…</div>
+  </main>
+
+  <dialog class="pp-dialog" id="pp-dialog"></dialog>
+  <div class="pp-toast" id="pp-toast" role="status" aria-live="polite"></div>
+
+  <script src="/custom-icons.js"></script>
+  <script src="/proposta.js"></script>
+</body>
+</html>

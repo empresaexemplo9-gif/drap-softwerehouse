@@ -12,6 +12,10 @@
     {
       "source": "/plataformas/:id",
       "destination": "/plataforma"
+    },
+    {
+      "source": "/proposta/:token",
+      "destination": "/proposta"
     }
   ],
   "headers": [
@@ -59,6 +63,19 @@
         {
           "key": "Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/proposta(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
         }
       ]
     },

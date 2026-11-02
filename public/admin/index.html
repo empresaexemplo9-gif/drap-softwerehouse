@@ -52,6 +52,7 @@
       <a href="/" class="brand"><span class="brand__mark">  <svg viewBox="0 0 778 781" fill="currentColor" aria-hidden="true"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg></span><span class="brand__text"><strong>DRAP</strong><small>Painel<em>&amp;</em>Business</small></span></a>
       <nav class="adm-tabs" role="tablist">
         <button role="tab" class="is-active" data-tab="leads">Leads <b id="badge-new"></b></button>
+        <button role="tab" data-tab="proposals">Propostas <b id="badge-review"></b></button>
         <button role="tab" data-tab="platforms">Plataformas</button>
         <button role="tab" data-tab="settings">Configurações</button>
       </nav>
@@ -75,6 +76,26 @@
         <div class="adm-card adm-table-wrap"><table class="adm-table" id="lead-table"></table></div>
       </section>
 
+      <!-- PROPOSTAS (plataformas sob medida) -->
+      <section data-panel="proposals" hidden>
+        <div id="pr-list-view">
+          <div class="adm-kpis" id="pr-kpis"></div>
+          <div class="adm-toolbar">
+            <input type="search" id="pr-search" placeholder="Buscar por cliente, empresa ou número…" />
+            <select id="pr-filter">
+              <option value="">Todos os status</option>
+              <option value="em_analise">Em análise</option><option value="rascunho">Rascunho</option><option value="enviada">Enviada</option>
+              <option value="visualizada">Visualizada</option><option value="aceita">Aceita</option><option value="recusada">Recusada</option>
+            </select>
+            <button class="btn btn--ghost btn--sm" id="pr-refresh"><span class="btn__label">Atualizar</span></button>
+            <button class="btn btn--primary btn--sm" id="pr-new"><span class="btn__label">Nova proposta</span><span class="btn__icon" aria-hidden="true">+</span></button>
+          </div>
+          <p class="adm-muted adm-note" id="pr-mailnote" hidden></p>
+          <div class="adm-card adm-table-wrap"><table class="adm-table" id="pr-table"></table></div>
+        </div>
+        <div id="pr-edit-view" hidden></div>
+      </section>
+
       <!-- PLATAFORMAS -->
       <section data-panel="platforms" hidden>
         <p class="adm-muted">Edite o catálogo exibido na home. Alterações aparecem no site imediatamente.</p>
@@ -90,6 +111,10 @@
 
   <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
 
+  <dialog class="adm-dialog" id="adm-dialog"></dialog>
+
+  <script src="/custom-icons.js"></script>
   <script src="/admin/admin.js"></script>
+  <script src="/admin/proposals.js"></script>
 </body>
 </html>

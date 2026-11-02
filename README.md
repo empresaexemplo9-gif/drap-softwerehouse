@@ -5,6 +5,10 @@ Site de apresentação e marketing da DRAP, com:
 - **Home**: hero, catálogo das plataformas prontas (cards com prévia da interface, paleta e logo de cada uma), serviços, processo e contato. Tema claro (padrão) e escuro, visual vítreo.
 - **Captação de leads**: o formulário grava no banco, com validação no navegador e no servidor, campo-isca anti-robô e limite de envios (5 por e-mail e 20 por IP a cada 10 minutos).
 - **Página de cada plataforma** (`/plataformas/<id>`): clicar no card abre uma apresentação completa para o cliente: para quem é, problemas que resolve, resultados, módulos, implantação, diferenciais, segurança, “Por que comprar da DRAP”, perguntas frequentes e formulário de demonstração.
+- **Plataforma sob medida** (`/sob-medida`): questionário em 6 etapas para o cliente descrever a ferramenta (projeto, usuários, funcionalidades, módulos “agora/depois”, prazo). A plataforma calcula o orçamento pela tabela de mercado e classifica a complexidade:
+  - **simples** → a proposta é publicada e enviada na hora (dá para desligar em Configurações);
+  - **média ou complexa** → fica “em análise” e a equipe revisa e envia pelo painel.
+- **Proposta** (`/proposta/<token>`): documento com a marca DRAP (logo, paleta petróleo/marfim/bronze e marca d'água oficial), diagrama de como a plataforma funciona, escopo incluído, módulos adicionais com valor próprio (o cliente liga e desliga e o total é recalculado), investimento com comparativo de mercado, cronograma e aceite on-line. Sai em **link**, **PDF** (botão “Baixar PDF”, A4 com marca d'água em todas as páginas) ou **e-mail**.
 - **Painel `/admin`**: mostra os leads com status, notas, busca, filtros e exportação CSV, permite editar o catálogo de plataformas e os contatos do site.
 
 Stack: HTML, CSS e JS sem framework · funções serverless da Vercel (`/api`) · **Neon Postgres** (criado pela própria Vercel).
@@ -14,12 +18,17 @@ public/                 site e painel (copiados para dist/ no build)
   index.html, styles.css, app.js, api.js
   platforms.js          catálogo de reserva + fonte do seed inicial
   previews.js           miniaturas da interface de cada plataforma
-  admin/                painel administrativo
+  sob-medida.*          questionário da plataforma sob medida
+  proposta.*            página/PDF da proposta comercial
+  custom-icons.js       ícones dos módulos
+  admin/                painel administrativo (inclui proposals.js)
 api/                    funções serverless (Node) — únicas com acesso ao banco
   catalog.js            GET  catálogo e contatos (público, cache de 60 s na CDN)
   leads.js              POST pedido de demonstração (público)
+  briefs.js             GET opções / POST questionário → proposta
+  proposals.js          GET proposta por token / POST aceite ou recusa
   admin/                login, logout, session, leads, platforms, settings
-lib/                    banco (pg), HTTP e sessão (cookie assinado)
+lib/                    banco (pg), HTTP, sessão, e-mail (Resend) e pricing.js (tabela de preços)
 db/
   migrations/           esquema SQL (aplicado automaticamente no build)
   seed.sql              catálogo inicial (carregado só se a tabela estiver vazia)
@@ -39,6 +48,8 @@ vercel.json             build, URLs limpas e cabeçalhos de segurança (CSP)
    | `ADMIN_EMAIL` | e-mail de login do painel |
    | `ADMIN_PASSWORD` | senha forte (16+ caracteres) |
    | `SESSION_SECRET` | texto aleatório com 32+ caracteres |
+
+   Opcional, para enviar propostas por e-mail: `RESEND_API_KEY` e `MAIL_FROM` (crie a conta em resend.com e verifique o domínio do remetente). `MAIL_TEAM` recebe o aviso de cada questionário novo (padrão: e-mail de contato do site).
 
    Para gerar o `SESSION_SECRET`: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`, ou use qualquer gerador de senhas.
 4. **Deploy**: em **Deployments → Redeploy**, ou faça um push na `main`. O log do build mostra `migrate: aplicada 001_init.sql`.
@@ -70,6 +81,13 @@ npm run dev                   # aplica migrações, gera dist/ e abre http://loc
 ```
 
 O servidor local executa as funções de `api/` como a Vercel e aplica os mesmos cabeçalhos do `vercel.json`.
+
+## Propostas sob medida
+
+- **Preços**: ficam em `lib/pricing.js`. Cada item tem uma faixa de mercado (`market.setup` = implantação, `market.monthly` = mensalidade) e o preço DRAP sai a 40% dessa faixa (`PRICE_POSITION`), ajustado pelo número de usuários e pela urgência. As faixas são referências iniciais: revise com os seus números antes de publicar. Mudar a tabela não altera propostas já geradas; no painel, “Recalcular pela tabela de preços” aplica a tabela nova a uma proposta.
+- **Complexidade**: cada funcionalidade, plataforma e integração soma pontos. Até 9 pontos e até R$ 45 mil de implantação = simples (`AUTO_LIMIT`). SaaS, marketplace, mais de 1.000 usuários, prazo menor que 1 mês e várias integrações críticas empurram para análise manual.
+- **Editar e enviar**: painel → **Propostas** → abrir. Todos os valores, nomes, descrições, desconto, prazo, validade e condições são editáveis; dá para adicionar itens do catálogo ou personalizados. Botões: Ver, PDF, Link e Enviar por e-mail (com mensagem pessoal). Em **Leads**, “+ Proposta” cria uma proposta manual para quem não passou pelo questionário.
+- **Pré-visualização**: logado no painel, você abre a proposta mesmo em análise ou rascunho; o cliente só vê depois de enviada.
 
 ## Editar conteúdo
 

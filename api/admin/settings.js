@@ -4,7 +4,7 @@ import { query } from "../../lib/db.js";
 import { handler, send, readJson, httpError } from "../../lib/http.js";
 import { requireAdmin } from "../../lib/auth.js";
 
-const KEYS = ["contact_email", "contact_whatsapp", "contact_hours"];
+const KEYS = ["contact_email", "contact_whatsapp", "contact_hours", "proposal_auto_send"];
 
 export default handler(["GET", "PUT"], async (req, res) => {
   requireAdmin(req);
@@ -13,6 +13,7 @@ export default handler(["GET", "PUT"], async (req, res) => {
     for (const k of KEYS) if (k in b) {
       const v = String(b[k] ?? "").trim();
       if (!v || v.length > 500) throw httpError(400, `Valor inválido para ${k}.`);
+      if (k === "proposal_auto_send" && !["sim", "nao"].includes(v)) throw httpError(400, "Use sim ou nao.");
       await query(`insert into site_settings (key, value) values ($1, $2) on conflict (key) do update set value = excluded.value`, [k, v]);
     }
   }

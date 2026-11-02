@@ -44,7 +44,10 @@
     show("view-app");
     await loadPlatforms();
     await Promise.all([loadLeads(), loadSettings()]);
+    document.dispatchEvent(new CustomEvent("drap:admin-ready"));
   }
+  // Compartilhado com /admin/proposals.js
+  window.DRAP_ADMIN = { call, toast, esc, fmtDate, reloadLeads: () => loadLeads() };
 
   $("#login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -93,7 +96,8 @@
           <td class="mono adm-nowrap">${fmtDate(l.created_at)}</td>
           <td><b>${esc(l.name)}</b>${l.company ? `<small>${esc(l.company)}</small>` : ""}
             <a href="mailto:${esc(l.email)}">${esc(l.email)}</a>
-            ${l.phone ? `<a href="https://wa.me/${digits(l.phone)}" target="_blank" rel="noopener">WhatsApp ${esc(l.phone)}</a>` : ""}</td>
+            ${l.phone ? `<a href="https://wa.me/${digits(l.phone)}" target="_blank" rel="noopener">WhatsApp ${esc(l.phone)}</a>` : ""}
+            <button type="button" class="adm-mini" data-new-proposal>+ Proposta</button></td>
           <td>${esc(platformName(l.platform_id) || l.interest || "—")}<small class="mono">${esc(l.source || "")}</small></td>
           <td class="adm-msg">${esc(l.message || "—")}</td>
           <td><select class="adm-status adm-status--${l.status}" data-field="status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${k === l.status ? " selected" : ""}>${v}</option>`).join("")}</select></td>
@@ -179,17 +183,21 @@
     ["contact_whatsapp", "WhatsApp"],
     ["contact_hours", "Horário de atendimento"],
   ];
+  const AUTO = "proposal_auto_send";
   async function loadSettings() {
     let map;
     try { map = await call("GET", "settings"); }
     catch (err) { return toast("Erro ao carregar configurações: " + err.message); }
     $("#settings-form").innerHTML = SETTINGS.map(([k, label]) => `
       <div class="field"><label class="mono" for="s-${k}">${label}</label><input id="s-${k}" name="${k}" value="${esc(map[k] || "")}" maxlength="500" /></div>`).join("") +
+      `<label class="adm-check adm-check--block"><input type="checkbox" name="${AUTO}"${map[AUTO] !== "nao" ? " checked" : ""} />
+        <span><b>Enviar propostas simples automaticamente</b><small>Questionários classificados como simples recebem a proposta na hora. Médios e complexos sempre aguardam a análise da equipe.</small></span></label>` +
       `<button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar</span><span class="btn__icon" aria-hidden="true">✓</span></button>`;
   }
   $("#settings-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const body = Object.fromEntries(SETTINGS.map(([k]) => [k, e.target.elements[k].value.trim()]).filter(([, v]) => v));
+    body[AUTO] = e.target.elements[AUTO].checked ? "sim" : "nao";
     try { await call("PUT", "settings", body); toast("Configurações salvas"); }
     catch (err) { toast("Erro: " + err.message); }
   });
