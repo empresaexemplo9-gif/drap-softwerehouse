@@ -6,12 +6,21 @@
   "regions": [
     "gru1"
   ],
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "public/platform-details.js"
+    }
+  },
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
     {
       "source": "/plataformas/:id",
       "destination": "/plataforma"
+    },
+    {
+      "source": "/proposta/modelo/:id",
+      "destination": "/proposta"
     },
     {
       "source": "/proposta/:token",

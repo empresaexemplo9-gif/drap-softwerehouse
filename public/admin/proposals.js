@@ -54,7 +54,8 @@
       <tbody>${rows.length ? rows.map((p) => { const t = totals(p.items, p.discount_pct); return `
         <tr data-id="${p.id}" class="adm-row-link">
           <td><b class="mono">${esc(p.number)}</b><small>${A().fmtDate(p.created_at)}</small></td>
-          <td><b>${esc(p.client_company || p.client_name)}</b><small>${esc(p.client_name)} · ${esc(p.client_email)}</small><small>${esc(p.title)}</small></td>
+          <td><b>${esc(p.client_company || p.client_name)}</b><small>${esc(p.client_name)} · ${esc(p.client_email)}</small>
+            ${p.platform_name ? `<span class="adm-plat" style="--c:${esc(p.platform_color)}"><i></i>${esc(p.platform_name)}</span>` : `<small>${esc(p.title)}</small>`}</td>
           <td><span class="adm-cpx adm-cpx--${p.complexity}">${CPX[p.complexity]}</span>${p.auto ? `<small>enviada automaticamente</small>` : `<small>pontuação ${p.score}</small>`}</td>
           <td class="adm-nowrap"><b>${brl(t.setup)}</b><small>${brl(t.monthly)}/mês</small></td>
           <td><span class="adm-pstat adm-pstat--${p.status}">${STATUS[p.status]}</span></td>
@@ -74,9 +75,13 @@
 
   /* ---------------- nova proposta ---------------- */
   const dlg = $("#adm-dialog");
-  function newDialog(prefill = {}) {
+  async function newDialog(prefill = {}) {
+    if (!loaded) await load();
     dlg.innerHTML = `<form class="adm-dlg" id="pr-new-form">
-      <h3>Nova proposta</h3><p class="adm-muted">Para clientes que não passaram pelo questionário. Ela começa como rascunho, com o núcleo e dois módulos sugeridos.</p>
+      <h3>Nova proposta</h3><p class="adm-muted">Começa como rascunho, para você revisar antes de enviar. Plataformas do catálogo usam a paleta e o tema do próprio produto.</p>
+      <label>Plataforma<select name="platform_id"><option value="">Sob medida (núcleo + módulos sugeridos)</option>
+        ${(A().platforms() || []).map((pl) => `<option value="${esc(pl.id)}"${pl.id === prefill.platform ? " selected" : ""}>${esc(pl.name)} · ${esc(pl.category)}</option>`).join("")}</select></label>
+      <label data-users${prefill.platform ? "" : " hidden"}>Usuários<select name="users">${Object.entries(labels.users || {}).map(([k, v]) => `<option value="${k}"${k === "11-50" ? " selected" : ""}>${esc(v)}</option>`).join("")}</select></label>
       <label>Nome do cliente<input name="client_name" required maxlength="120" value="${esc(prefill.name)}" /></label>
       <label>E-mail<input name="client_email" type="email" required maxlength="254" value="${esc(prefill.email)}" /></label>
       <label>Empresa<input name="client_company" maxlength="120" value="${esc(prefill.company)}" /></label>
@@ -85,9 +90,11 @@
       <div class="adm-dlg__act"><button type="button" class="btn btn--ghost btn--sm" data-close><span class="btn__label">Cancelar</span></button>
         <button class="btn btn--primary btn--sm"><span class="btn__label">Criar rascunho</span><span class="btn__icon" aria-hidden="true">→</span></button></div></form>`;
     dlg.showModal();
+    $("#pr-new-form [name=platform_id]").addEventListener("change", (e) => ($("#pr-new-form [data-users]").hidden = !e.target.value));
     $("#pr-new-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const body = Object.fromEntries(new FormData(e.target));
+      if (!body.platform_id) { delete body.platform_id; delete body.users; }
       try { const p = await A().call("POST", "proposals", body); dlg.close(); list.unshift(p); renderList(); goTab(); open(p.id); }
       catch (err) { A().toast("Erro: " + err.message); }
     });
@@ -101,7 +108,12 @@
     const tr = b.closest("tr"), id = tr.dataset.id;
     const name = $("td:nth-child(2) b", tr)?.textContent || "", email = $("td:nth-child(2) a[href^=mailto]", tr)?.textContent || "";
     const company = $("td:nth-child(2) small", tr)?.textContent || "", phone = ($("td:nth-child(2) a[href*='wa.me']", tr)?.textContent || "").replace(/^WhatsApp\s*/, "");
-    newDialog({ id, name, email, company, phone });
+    newDialog({ id, name, email, company, phone, platform: tr.dataset.platform });
+  });
+  // "Gerar proposta para cliente" na aba Plataformas
+  $("#platform-list").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-platform-proposal]"); if (!b) return;
+    newDialog({ platform: b.dataset.platformProposal });
   });
 
   /* ---------------- editor ---------------- */
@@ -134,6 +146,7 @@
     </tr>`;
 
   function briefHtml(b) {
+    if (cur?.platform) return `<p class="adm-muted">Proposta padrão do <b>${esc(cur.platform.name)}</b>, no tema da plataforma${b?.users ? `, dimensionada para ${esc(labels.users?.[b.users] || b.users).toLowerCase()}` : ""}. Os módulos incluídos vêm da página da plataforma; edite à vontade.</p>`;
     if (!b || !b.description) return `<p class="adm-muted">Proposta criada manualmente (sem questionário).</p>`;
     const val = (k, v) => {
       if (k === "modules") return Object.entries(v).map(([m, s]) => `${catalog[m]?.name || m} (${s})`).join(", ");
@@ -153,7 +166,7 @@
       <div class="adm-ed-top">
         <button class="btn btn--ghost btn--sm" id="ed-back"><span class="btn__label">← Propostas</span></button>
         <div><b class="mono">${esc(p.number)}</b> <span class="adm-cpx adm-cpx--${p.complexity}">${CPX[p.complexity]}</span>
-          <span class="adm-pstat adm-pstat--${p.status}">${STATUS[p.status]}</span>${p.auto ? ` <small class="adm-muted-s">gerada e enviada automaticamente</small>` : ""}</div>
+          <span class="adm-pstat adm-pstat--${p.status}">${STATUS[p.status]}</span>${p.platform ? ` <span class="adm-plat" style="--c:${esc(p.platform.palette?.[0])}"><i></i>${esc(p.platform.name)} · tema da plataforma</span>` : ""}${p.auto ? ` <small class="adm-muted-s">gerada e enviada automaticamente</small>` : ""}</div>
       </div>
       <div class="adm-ed">
         <form class="adm-ed__main" id="ed-form">
@@ -222,7 +235,7 @@
               <a class="btn btn--ghost btn--sm" href="${esc(p.url)}?print=1" target="_blank" rel="noopener"><span class="btn__label">PDF</span></a>
               <button class="btn btn--ghost btn--sm" id="ed-copy"><span class="btn__label">Link</span></button>
             </div>
-            ${p.brief?.description ? `<button class="btn btn--ghost btn--sm btn--block" id="ed-reprice"><span class="btn__label">Recalcular pela tabela de preços</span></button>` : ""}
+            ${p.brief?.description || p.platform_id ? `<button class="btn btn--ghost btn--sm btn--block" id="ed-reprice"><span class="btn__label">Recalcular pela tabela de preços</span></button>` : ""}
             <p class="adm-muted-s">${p.sent_at ? `Enviada em ${A().fmtDate(p.sent_at)}.` : "Ainda não enviada."} ${p.view_count ? `Vista ${p.view_count}× (primeira em ${A().fmtDate(p.viewed_at)}).` : ""}
               ${p.decided_at ? `<br>Respondida em ${A().fmtDate(p.decided_at)}${p.accepted_keys?.length ? ` com: ${p.accepted_keys.map((k) => esc(p.items.find((i) => i.key === k)?.name || k)).join(", ")}` : ""}.` : ""}</p>
           </div>

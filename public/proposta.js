@@ -12,22 +12,68 @@
   const toast = (t) => { const el = $("#pp-toast"); el.textContent = t; el.classList.add("is-on"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("is-on"), 2400); };
 
   const token = (location.pathname.match(/\/proposta\/([A-Za-z0-9_-]{24,64})/) || [])[1] || new URLSearchParams(location.search).get("t") || "";
+  const modelId = (location.pathname.match(/\/proposta\/modelo\/([a-z0-9-]{2,40})/) || [])[1] || "";
   const autoPrint = new URLSearchParams(location.search).has("print");
 
   const fail = (title, text) => {
     main.removeAttribute("aria-busy");
     main.innerHTML = `<section class="pp-empty">${MARK}<p class="pp-k">DRAP · PROPOSTA</p><h1>${title}</h1><p>${text}</p><a class="pp-btn pp-btn--petrol" href="/">Ir para o site da DRAP</a></section>`;
   };
-  if (!token) return fail("Link incompleto", "Confira se o endereço foi copiado inteiro.");
+  if (!token && !modelId) return fail("Link incompleto", "Confira se o endereço foi copiado inteiro.");
 
   let P;
   try {
-    const res = await fetch(`/api/proposals?token=${encodeURIComponent(token)}`, { credentials: "same-origin" });
+    const res = await fetch(modelId ? `/api/proposals?model=${modelId}` : `/api/proposals?token=${encodeURIComponent(token)}`, { credentials: "same-origin" });
     const body = await res.json().catch(() => ({}));
     if (res.status === 202) return fail("Sua proposta está em análise", `Olá, ${esc(String(body.client?.name || "").split(" ")[0])}! A equipe da DRAP está revisando o escopo do pedido ${esc(body.number || "")}. Você recebe um e-mail assim que ela for liberada.`);
     if (!res.ok) return fail("Proposta não encontrada", esc(body.error || "O link pode ter expirado ou sido digitado errado."));
     P = body;
   } catch { return fail("Sem conexão", "Não conseguimos carregar a proposta agora. Tente novamente em instantes."); }
+
+  /* ---------- tema: paleta, fontes e logo da plataforma do catálogo ----------
+     A marca, o logo e a marca d'água continuam sendo os da DRAP; só a paleta e a
+     tipografia passam a ser as do produto vendido. */
+  const PL = P.platform && Array.isArray(P.platform.palette) && P.platform.palette.length ? P.platform : null;
+  const rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const hex = (c) => "#" + c.map((v) => Math.round(v).toString(16).padStart(2, "0")).join("");
+  const mixH = (a, b, k) => hex(rgb(a).map((v, i) => v + (rgb(b)[i] - v) * k));
+  const lum = (h) => { const [r, g, b] = rgb(h); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; };
+  const sat = (h) => { const c = rgb(h).map((v) => v / 255), mx = Math.max(...c), mn = Math.min(...c), l = (mx + mn) / 2; return mx === mn ? 0 : (mx - mn) / (1 - Math.abs(2 * l - 1)); };
+  const dist = (a, b) => Math.hypot(...rgb(a).map((v, i) => v - rgb(b)[i])) / 441;
+  function applyTheme(pl) {
+    const pal = pl.palette.filter((h) => /^#[0-9a-f]{6}$/i.test(h));
+    const primary = pal[0];
+    const darkest = [...pal].sort((a, b) => lum(a) - lum(b))[0], lightest = [...pal].sort((a, b) => lum(b) - lum(a))[0];
+    const ink = lum(darkest) < 0.2 ? darkest : "#121419";
+    const paper = lum(lightest) > 0.86 ? lightest : mixH(primary, "#ffffff", 0.95);
+    // destaque: a cor da paleta mais distante da primária (e mais viva); senão, a primária clareada
+    const cands = pal.slice(1).filter((h) => lum(h) > 0.12 && lum(h) < 0.86).map((h) => ({ h, sc: dist(h, primary) * (0.5 + sat(h)) })).sort((a, b) => b.sc - a.sc);
+    let accent = cands[0] && dist(cands[0].h, primary) > 0.18 ? cands[0].h : mixH(primary, "#ffffff", 0.4);
+    let light = accent; while (lum(light) < 0.62) light = mixH(light, "#ffffff", 0.18);
+    let text = accent; while (lum(text) > 0.42) text = mixH(text, "#000000", 0.18);
+    const deep = lum(primary) > 0.3 ? mixH(primary, ink, 0.55) : mixH(primary, ink, 0.4);
+    const v = {
+      "--petrol": primary, "--petrol-2": deep, "--petrol-3": mixH(primary, "#ffffff", 0.18), "--petrol-tint": mixH(primary, "#ffffff", 0.9),
+      "--cream": paper, "--paper": mixH(paper, "#ffffff", 0.6), "--sand": mixH(paper, primary, 0.07),
+      "--line": mixH(paper, ink, 0.12), "--line-2": mixH(paper, ink, 0.07),
+      "--gold": accent, "--gold-2": light, "--gold-text": text, "--ink": ink,
+      "--dim": mixH(ink, paper, 0.3), "--mute": mixH(ink, paper, 0.5),
+    };
+    const root = document.documentElement.style;
+    for (const [k, val] of Object.entries(v)) root.setProperty(k, val);
+    const f = pl.fonts || {};
+    if (f.display || f.sans) {
+      const fam = [...new Set([f.display, f.sans].filter(Boolean))].map((x) => `family=${encodeURIComponent(x).replace(/%20/g, "+")}:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500`).join("&");
+      document.head.append(Object.assign(document.createElement("link"), { rel: "stylesheet", href: `https://fonts.googleapis.com/css2?${fam}&display=swap` }));
+      if (f.display) root.setProperty("--serif", `"${f.display}", Georgia, serif`);
+      if (f.sans) root.setProperty("--sans", `"${f.sans}", system-ui, sans-serif`);
+    }
+    document.body.classList.add("pp--platform", `pp--${pl.id}`);
+    $('meta[name="theme-color"]')?.setAttribute("content", primary);
+  }
+  if (PL) applyTheme(PL);
+  const PLOGO = PL?.logo_svg || "";
+  const plName = PL ? PL.name : "";
 
   /* ---------- estado e totais (mesma regra do servidor) ---------- */
   const decided = ["aceita", "recusada"].includes(P.status);
@@ -48,12 +94,13 @@
 
   const company = P.client.company || P.client.name;
   document.title = `${P.title} · Proposta ${P.number} · DRAP`;
+  if (P.model) { $("#pp-copy").hidden = true; }
 
   /* ---------- ilustração: como a plataforma funciona ---------- */
   function architecture() {
     const targets = core.filter((i) => ["mobile", "desktop", "offline"].includes(i.key));
     const devices = [{ icon: "desktop", name: "Web" }, ...targets.map((t) => ({ icon: t.icon, name: t.key === "mobile" ? "App" : t.key === "desktop" ? "Windows" : "Offline" }))];
-    const feats = core.filter((i) => !["nucleo", "mobile", "desktop", "offline"].includes(i.key)).slice(0, 6);
+    const feats = core.filter((i) => !["nucleo", "mobile", "desktop", "offline", "implantacao", "licenca"].includes(i.key)).slice(0, 6);
     const integ = mods.slice(0, 6);
     const W = 880, H = Math.max(330, 70 + integ.length * 58);
     const cx = 330, cw = 230, cy = 40, ch = H - 80;
@@ -78,9 +125,10 @@
     });
     // plataforma
     svg += `<g transform="translate(${cx} ${cy})"><rect class="a-core" width="${cw}" height="${ch}" rx="18"/>
-      <g transform="translate(20 22) scale(.034)" class="a-mark"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></g>
-      <text x="56" y="38" class="a-ct">${esc((P.title || "Plataforma").replace(/^Plataforma\s*/i, "").slice(0, 18) || "Sua plataforma")}</text>
-      <text x="56" y="54" class="a-cs">PLATAFORMA DRAP</text>
+      ${PLOGO ? `<g class="a-plogo">${PLOGO.replace("<svg", '<svg x="20" y="22" width="26" height="27"')}</g>`
+        : `<g transform="translate(20 22) scale(.034)" class="a-mark"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></g>`}
+      <text x="56" y="38" class="a-ct">${esc((PL ? PL.name.replace(/^DRAP\s*/i, "") : (P.title || "Plataforma").replace(/^Plataforma\s*/i, "")).slice(0, 18) || "Sua plataforma")}</text>
+      <text x="56" y="54" class="a-cs">${PL ? esc(PL.category.toUpperCase().slice(0, 26)) : "PLATAFORMA DRAP"}</text>
       ${feats.map((f, i) => `<g transform="translate(20 ${82 + i * 30})"><circle cx="5" cy="-4" r="3" class="a-dot"/><text x="16" y="0" class="a-cf">${esc(f.name.length > 26 ? f.name.slice(0, 25) + "…" : f.name)}</text></g>`).join("")}
       <g transform="translate(20 ${ch - 36})">${devices.map((d, i) => `<g transform="translate(${i * 48} 0)"><rect width="40" height="22" rx="6" class="a-dev"/><text x="20" y="15" class="a-dt">${esc(d.name)}</text></g>`).join("")}</g>
     </g>`;
@@ -106,7 +154,8 @@
   /* ---------- cronograma ---------- */
   function timeline() {
     const w = P.weeks;
-    const ph = [
+    const steps = PL?.steps?.length ? PL.steps : null;
+    const ph = steps ? steps.map((st, i, a) => [esc(st.title), i / a.length * 0.92, Math.min(1, (i + 1) / a.length * 0.92 + (i === a.length - 1 ? 0.08 : 0.06)), esc(st.text.length > 90 ? st.text.slice(0, 88) + "…" : st.text)]) : [
       ["Imersão e escopo", 0, 0.12, "Entrevistas, fluxos e protótipo navegável."],
       ["Design da interface", 0.08, 0.3, "Telas com a sua identidade visual."],
       ["Desenvolvimento", 0.22, 0.82, "Entregas quinzenais para você acompanhar."],
@@ -162,7 +211,7 @@
         <table>
           <thead><tr><th>Item</th><th>Implantação</th><th>Mensal</th></tr></thead>
           <tbody>
-            <tr><td><b>Plataforma base</b><small>${core.length} ${core.length === 1 ? "item" : "itens"} do escopo principal</small></td><td>${brl(t.core)}</td><td>${brl(core.reduce((a, i) => a + i.monthly, 0))}</td></tr>
+            <tr><td><b>${PL ? `${esc(PL.name)}` : "Plataforma base"}</b><small>${PL ? "implantação e licença, com todos os módulos do produto" : `${core.length} ${core.length === 1 ? "item" : "itens"} do escopo principal`}</small></td><td>${brl(t.core)}</td><td>${brl(core.reduce((a, i) => a + i.monthly, 0))}</td></tr>
             ${mods.filter((m) => chosen.has(m.key)).map((m) => `<tr><td>${esc(m.name)}<small>módulo adicional</small></td><td>${brl(m.setup)}</td><td>${brl(m.monthly)}</td></tr>`).join("")}
             ${t.discount ? `<tr class="pp-inv__disc"><td>Desconto comercial (${String(P.discount_pct).replace(".", ",")}%)</td><td>− ${brl(t.discount)}</td><td>—</td></tr>` : ""}
           </tbody>
@@ -178,7 +227,7 @@
     const t = totals();
     main.removeAttribute("aria-busy");
     main.innerHTML = `
-      ${P.preview ? `<div class="pp-preview">Pré-visualização da equipe DRAP · status: <b>${esc(P.status.replace("_", " "))}</b>. O cliente ${["em_analise", "rascunho"].includes(P.status) ? "ainda não vê esta proposta" : "vê esta mesma página"}.</div>` : ""}
+      ${P.model ? `<div class="pp-preview">Modelo da proposta padrão do <b>${esc(plName)}</b>, com valores de referência para 11 a 50 usuários. Para enviar a um cliente: Painel → Propostas → Nova proposta.</div>` : P.preview ? `<div class="pp-preview">Pré-visualização da equipe DRAP · status: <b>${esc(P.status.replace("_", " "))}</b>. O cliente ${["em_analise", "rascunho"].includes(P.status) ? "ainda não vê esta proposta" : "vê esta mesma página"}.</div>` : ""}
       <header class="pp-cover">
         <div class="pp-cover__wm" aria-hidden="true">${MARK}</div>
         <div class="pp-cover__top">
@@ -190,14 +239,15 @@
           </dl>
         </div>
         <div class="pp-cover__body">
-          <p class="pp-k pp-k--gold">PROPOSTA COMERCIAL · PLATAFORMA SOB MEDIDA</p>
-          <h1>${esc(P.title)}</h1>
+          ${PL ? `<div class="pp-plat"><span class="pp-plat__logo">${PLOGO}</span><span><small>${esc(PL.category)}</small><b>${esc(PL.name)}</b></span></div>` : ""}
+          <p class="pp-k pp-k--gold">PROPOSTA COMERCIAL · ${PL ? "PLATAFORMA DO CATÁLOGO DRAP" : "PLATAFORMA SOB MEDIDA"}</p>
+          <h1>${esc(PL ? PL.headline || P.title : P.title)}</h1>
           <p class="pp-cover__for">Preparada para <b>${esc(P.client.name)}</b>${P.client.company ? ` · ${esc(P.client.company)}` : ""}</p>
         </div>
         <div class="pp-cover__kpis">
           <div><small>Investimento</small><b id="k-setup">${brl(t.setup)}</b></div>
           <div><small>Mensalidade</small><b id="k-monthly">${brl(t.monthly)}</b></div>
-          <div><small>Prazo estimado</small><b>${P.weeks} semanas</b></div>
+          <div><small>${PL ? "Implantação em" : "Prazo estimado"}</small><b>${P.weeks} semanas</b></div>
           <div><small>Módulos</small><b id="k-mods">${core.length + chosen.size}</b></div>
         </div>
       </header>
@@ -205,24 +255,27 @@
       ${decided ? `<div class="pp-state pp-state--${P.status}">${P.status === "aceita" ? `${icon("check")} Proposta aceita em ${date(P.decided_at)}. Nossa equipe entra em contato para o contrato e o kick-off.` : "Esta proposta foi recusada. Se mudar de ideia, fale com a gente."}</div>`
         : expired ? `<div class="pp-state pp-state--recusada">Esta proposta expirou em ${date(P.valid_until)}. Fale com a DRAP para atualizar os valores.</div>` : ""}
 
-      ${sec("01", "SEU DESAFIO", `O que <em>entendemos</em>`, `
+      ${PL ? sec("01", "SEU DESAFIO", `O que trava a sua <em>operação</em>`, `
+        <p class="pp-lead">${esc(P.intro)}</p>
+        ${PL.pains?.length ? `<div class="pp-versus"><div class="pp-pains"><span class="pp-k">SEM O ${esc(PL.name.toUpperCase())}</span><ul>${PL.pains.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>
+          <div class="pp-outs">${(PL.outcomes || []).map((o) => `<article><b>${esc(o.title)}</b><p>${esc(o.text)}</p></article>`).join("")}</div></div>` : ""}`) : sec("01", "SEU DESAFIO", `O que <em>entendemos</em>`, `
         <p class="pp-lead">${esc(P.intro)}</p>
         ${P.brief.description ? `<blockquote class="pp-quote"><span class="pp-k">NAS SUAS PALAVRAS</span>${esc(P.brief.description)}</blockquote>` : ""}
         ${chips.length ? `<ul class="pp-chips">${chips.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}`)}
 
-      ${sec("02", "A SOLUÇÃO", `Como a sua plataforma <em>vai funcionar</em>`, `
-        <p class="pp-lead">Uma plataforma única, com a marca ${esc(company)}, que reúne as pessoas que usam o sistema, as rotinas do negócio e os serviços externos com que ele conversa.</p>
+      ${sec("02", "A SOLUÇÃO", PL ? `Como o ${esc(PL.name)} <em>vai funcionar</em>` : `Como a sua plataforma <em>vai funcionar</em>`, `
+        <p class="pp-lead">${PL ? `O ${esc(PL.name)} reúne a sua equipe, os seus clientes e as rotinas da operação num só lugar, conectado aos serviços externos que você escolher.` : `Uma plataforma única, com a marca ${esc(company)}, que reúne as pessoas que usam o sistema, as rotinas do negócio e os serviços externos com que ele conversa.`}</p>
         <figure class="pp-fig">${architecture()}
           <figcaption><span><i class="lg lg--on"></i>Integração incluída</span><span><i class="lg lg--opt"></i>Módulo opcional</span></figcaption></figure>`)}
 
       ${sec("03", "ESCOPO INCLUÍDO", `O que já está <em>integrado</em>`, `
-        <p class="pp-lead">Estes itens formam a plataforma base e estão no valor de implantação.</p>
+        <p class="pp-lead">${PL ? `Tudo isto já vem no ${esc(PL.name)}, pronto para uso: a implantação configura a plataforma para a sua empresa e a licença mantém tudo funcionando.` : "Estes itens formam a plataforma base e estão no valor de implantação."}</p>
         <div class="pp-grid">${core.map((i) => `<article class="pp-item">
           <span class="pp-ic">${icon(i.icon)}</span><h4>${esc(i.name)}</h4><p>${esc(i.description)}</p>
-          <footer><span>${brl(i.setup)}</span>${i.monthly ? `<small>${brl(i.monthly)}/mês</small>` : ""}</footer></article>`).join("")}</div>`)}
+          <footer>${!i.setup && !i.monthly ? `<span>Incluído</span>` : `<span>${i.setup ? brl(i.setup) : brl(i.monthly) + "/mês"}</span>${i.setup && i.monthly ? `<small>${brl(i.monthly)}/mês</small>` : ""}`}</footer></article>`).join("")}</div>`)}
 
       ${mods.length ? sec("04", "MÓDULOS ADICIONAIS", `Para <em>ir além</em>`, `
-        <p class="pp-lead">${decided ? "Módulos escolhidos no aceite estão marcados como incluídos." : "Ative ou desative os módulos abaixo: o investimento é recalculado na hora. Os que você pediu já vêm ativados."}</p>
+        <p class="pp-lead">${decided ? "Módulos escolhidos no aceite estão marcados como incluídos." : (PL ? "Integrações que ampliam o " + esc(PL.name) + ". Ative as que fizerem sentido: o investimento é recalculado na hora." : "Ative ou desative os módulos abaixo: o investimento é recalculado na hora. Os que você pediu já vêm ativados.")}</p>
         <div class="pp-mods" id="pp-mods">${mods.map(modCard).join("")}</div>`, "pp-sec--mods") : ""}
 
       ${sec(mods.length ? "05" : "04", "INVESTIMENTO", `Valor da <em>sua plataforma</em>`, `<div id="pp-inv">${investment()}</div>`)}
@@ -236,7 +289,7 @@
       <section class="pp-sec pp-close" id="aceite">
         <div class="pp-close__copy">
           <p class="pp-k pp-k--gold">PRÓXIMOS PASSOS</p>
-          <h2>Vamos construir a <em>${esc(company)}</em> digital?</h2>
+          <h2>${PL ? `Vamos colocar o <em>${esc(PL.name)}</em> para rodar na ${esc(company)}?` : `Vamos construir a <em>${esc(company)}</em> digital?`}</h2>
           <ol><li>Você aceita a proposta com os módulos escolhidos.</li><li>Enviamos o contrato para assinatura eletrônica.</li><li>Agendamos o kick-off em até 5 dias úteis.</li></ol>
           ${!decided && !expired && !P.preview ? `<div class="pp-close__act">
             <button type="button" class="pp-btn pp-btn--gold pp-btn--lg" id="pp-accept">Aceitar proposta · <span id="k-accept">${brl(t.setup)}</span></button>
@@ -256,10 +309,11 @@
 
       <footer class="pp-foot">
         <div class="pp-logo pp-logo--sm">${MARK}<span><strong>DRAP</strong><small>SoftwareHouse<em>&amp;</em>Business</small></span></div>
+        ${PL ? `<div class="pp-foot__plat"><span class="pp-plat__logo">${PLOGO}</span>${esc(PL.name)}</div>` : ""}
         <p>Proposta ${esc(P.number)} · válida até ${date(P.valid_until)} · Documento confidencial preparado para ${esc(company)}.</p>
       </footer>`;
 
-    $("#pp-num").textContent = `Proposta ${P.number}`;
+    $("#pp-num").textContent = `Proposta ${P.number}${PL ? " · " + PL.name : ""}`;
     $("#pp-bar").hidden = false;
     $("#pp-go-accept").hidden = decided || expired || P.preview;
   }

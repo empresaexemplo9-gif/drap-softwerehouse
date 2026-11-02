@@ -1,15 +1,23 @@
 // GET   /api/admin/proposals                → lista + catálogo de preços + se o e-mail está configurado
 // GET   /api/admin/proposals?id=<uuid>      → proposta completa (com respostas e dados internos)
-// POST  /api/admin/proposals                → cria proposta manual { client_name, client_email, ... }
+// POST  /api/admin/proposals                → cria proposta manual { client_name, client_email, ..., platform_id?, users? }
+//                                            (com platform_id: proposta padrão da plataforma do catálogo, no tema dela)
 // PATCH /api/admin/proposals?id=<uuid>      → edita campos (valores, itens, textos, status)
 // POST  /api/admin/proposals?id=<uuid>&action=send   → envia por e-mail { message? }
 // POST  /api/admin/proposals?id=<uuid>&action=reprice → recalcula itens pelo questionário
 import { query } from "../../lib/db.js";
 import { handler, send, readJson, httpError } from "../../lib/http.js";
 import { requireAdmin } from "../../lib/auth.js";
-import { adminCatalog, publicCatalog, estimate, normalizeBrief, totalsOf } from "../../lib/pricing.js";
+import { USERS, adminCatalog, publicCatalog, estimate, normalizeBrief, totalsOf } from "../../lib/pricing.js";
 import { newToken, DEFAULT_TERMS, cleanItems, deliverProposal, proposalUrl } from "../../lib/proposals.js";
 import { mailConfigured } from "../../lib/mail.js";
+import { platformProposal, PLATFORM_TERMS } from "../../lib/platform-plans.js";
+
+async function platformRow(id) {
+  const { rows: [pl] } = await query("select * from platforms where id = $1", [String(id)]);
+  if (!pl) throw httpError(400, "Plataforma não encontrada.");
+  return pl;
+}
 
 const STATUS = ["em_analise", "rascunho", "enviada", "visualizada", "aceita", "recusada"];
 const isId = (id) => /^[0-9a-f-]{36}$/i.test(id);
@@ -29,7 +37,8 @@ export default handler(["GET", "POST", "PATCH"], async (req, res) => {
   if (req.method === "GET") {
     if (id) { if (!isId(id)) throw httpError(400, "id inválido."); return send(res, 200, withUrl(req, await get(id))); }
     const { rows } = await query(
-      `select id, token, number, status, complexity, score, auto, client_name, client_email, client_company, title,
+      `select id, token, number, status, complexity, score, auto, platform_id, platform->>'name' as platform_name,
+              platform->'palette'->>0 as platform_color, client_name, client_email, client_company, title,
               items, discount_pct, sent_at, viewed_at, view_count, decided_at, valid_until, created_at
          from proposals order by created_at desc limit 500`);
     return send(res, 200, { proposals: rows.map((p) => withUrl(req, p)), catalog: adminCatalog(), labels: publicCatalog(), mail: mailConfigured() });
@@ -41,12 +50,24 @@ export default handler(["GET", "POST", "PATCH"], async (req, res) => {
     if (name.length < 2) throw httpError(400, "Informe o nome do cliente.");
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw httpError(400, "Informe um e-mail válido.");
     const company = String(b.client_company || "").trim().slice(0, 120) || null;
+    const phone = String(b.client_phone || "").trim().slice(0, 40) || null;
+    const leadId = isId(String(b.lead_id || "")) ? b.lead_id : null;
+    if (b.platform_id) {
+      const users = USERS[b.users] ? b.users : "11-50";
+      const pp = platformProposal(await platformRow(b.platform_id), { users, company: company || name });
+      const { rows: [p] } = await query(
+        `insert into proposals (token, status, complexity, client_name, client_email, client_phone, client_company, lead_id,
+           title, intro, items, weeks, payment_terms, brief, platform_id, platform)
+         values ($1, 'rascunho', 'simples', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning *`,
+        [newToken(), name.slice(0, 120), email, phone, company, leadId, pp.title.slice(0, 140), pp.intro.slice(0, 4000),
+         JSON.stringify(pp.items), pp.weeks, PLATFORM_TERMS, JSON.stringify({ users }), b.platform_id, JSON.stringify(pp.platform)]);
+      return send(res, 201, withUrl(req, p));
+    }
     const cat = adminCatalog();
     const { rows: [p] } = await query(
       `insert into proposals (token, status, complexity, client_name, client_email, client_phone, client_company, lead_id, title, intro, items, payment_terms, brief)
        values ($1, 'rascunho', 'media', $2, $3, $4, $5, $6, $7, $8, $9, $10, '{}') returning *`,
-      [newToken(), name.slice(0, 120), email, String(b.client_phone || "").trim().slice(0, 40) || null, company,
-       isId(String(b.lead_id || "")) ? b.lead_id : null,
+      [newToken(), name.slice(0, 120), email, phone, company, leadId,
        `Plataforma sob medida${company ? " · " + company : ""}`.slice(0, 140),
        `Preparamos esta proposta para ${company || name} com base na nossa conversa.`,
        JSON.stringify([cat.nucleo, { ...cat.nfe, selected: false }, { ...cat.banco, selected: false }]), DEFAULT_TERMS]);
@@ -63,6 +84,12 @@ export default handler(["GET", "POST", "PATCH"], async (req, res) => {
       const url = await deliverProposal(req, p, String(b.message || "").trim().slice(0, 1500) || null);
       if (p.lead_id) await query(`update leads set status = 'proposta' where id = $1 and status in ('novo', 'em_contato')`, [p.lead_id]);
       return send(res, 200, { ok: true, url, ...withUrl(req, await get(id)) });
+    }
+    if (action === "reprice" && p.platform_id) {
+      const pp = platformProposal(await platformRow(p.platform_id), { users: p.brief?.users, company: p.client_company || p.client_name });
+      const { rows: [u] } = await query(`update proposals set items = $2, weeks = $3, platform = $4 where id = $1 returning *`,
+        [id, JSON.stringify(pp.items), pp.weeks, JSON.stringify(pp.platform)]);
+      return send(res, 200, withUrl(req, u));
     }
     if (action === "reprice") {
       if (!p.brief?.description) throw httpError(400, "Esta proposta não veio do questionário: edite os itens à mão.");

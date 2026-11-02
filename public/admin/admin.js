@@ -47,7 +47,7 @@
     document.dispatchEvent(new CustomEvent("drap:admin-ready"));
   }
   // Compartilhado com /admin/proposals.js
-  window.DRAP_ADMIN = { call, toast, esc, fmtDate, reloadLeads: () => loadLeads() };
+  window.DRAP_ADMIN = { call, toast, esc, fmtDate, reloadLeads: () => loadLeads(), platforms: () => platforms };
 
   $("#login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -92,7 +92,7 @@
     $("#lead-table").innerHTML = `
       <thead><tr><th>Recebido</th><th>Contato</th><th>Interesse</th><th>Mensagem</th><th>Status</th><th>Notas internas</th></tr></thead>
       <tbody>${rows.length ? rows.map((l) => `
-        <tr data-id="${l.id}">
+        <tr data-id="${l.id}" data-platform="${esc(l.platform_id || "")}">
           <td class="mono adm-nowrap">${fmtDate(l.created_at)}</td>
           <td><b>${esc(l.name)}</b>${l.company ? `<small>${esc(l.company)}</small>` : ""}
             <a href="mailto:${esc(l.email)}">${esc(l.email)}</a>
@@ -156,7 +156,10 @@
           <label>Link (URL ou #contato)<input name="url" value="${esc(p.url)}" maxlength="300" /></label>
           <label>Ordem<input name="sort_order" type="number" value="${p.sort_order}" step="10" /></label>
           <label class="adm-check"><input type="checkbox" name="active"${p.active ? " checked" : ""} /> Publicada no site</label>
-          <div class="w2 adm-pactions"><button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar alterações</span><span class="btn__icon" aria-hidden="true">✓</span></button></div>
+          <div class="w2 adm-pactions">
+            <a class="btn btn--ghost btn--sm" href="/proposta/modelo/${esc(p.id)}" target="_blank" rel="noopener"><span class="btn__label">Ver proposta modelo</span><span class="btn__kbd mono">↗</span></a>
+            <button class="btn btn--ghost btn--sm" type="button" data-platform-proposal="${esc(p.id)}"><span class="btn__label">Gerar proposta para cliente</span></button>
+            <button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar alterações</span><span class="btn__icon" aria-hidden="true">✓</span></button></div>
         </form>
       </details>`).join("");
   }

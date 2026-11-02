@@ -1,10 +1,30 @@
 // GET  /api/proposals?token=…  → proposta para o cliente (só depois de liberada pela equipe;
 //                                a equipe logada vê também rascunhos e propostas em análise)
+// GET  /api/proposals?model=<plataforma> → modelo da proposta padrão de uma plataforma do catálogo
+//                                (só para a equipe logada; nada é gravado)
 // POST /api/proposals?token=…  → { action: "accept", modules: [keys] } | { action: "decline", reason }
 import { query } from "../lib/db.js";
 import { handler, send, readJson, httpError } from "../lib/http.js";
 import { readSession } from "../lib/auth.js";
-import { publicView, settings } from "../lib/proposals.js";
+import { publicView, settings, DEFAULT_TERMS } from "../lib/proposals.js";
+import { platformProposal, PLATFORM_TERMS } from "../lib/platform-plans.js";
+
+const isAdmin = (req) => { try { return Boolean(readSession(req)); } catch { return false; } };
+
+// Proposta-modelo de uma plataforma, montada na hora para pré-visualização
+async function model(req, res, id) {
+  if (!isAdmin(req)) throw httpError(401, "Entre no painel para ver os modelos de proposta.");
+  const { rows: [pl] } = await query("select * from platforms where id = $1", [id]);
+  if (!pl) throw httpError(404, "Plataforma não encontrada.");
+  const pp = platformProposal(pl, { company: "Sua empresa" });
+  const today = new Date().toISOString().slice(0, 10);
+  const valid = new Date(Date.now() + 15 * 864e5).toISOString().slice(0, 10);
+  const s = await settings().catch(() => ({}));
+  send(res, 200, { ...publicView({
+    ...pp, number: `MODELO-${pl.code}`, status: "rascunho", client_name: "Nome do cliente", client_company: "Sua empresa",
+    brief: {}, discount_pct: 0, payment_terms: PLATFORM_TERMS || DEFAULT_TERMS, show_market: true, valid_until: valid, created_at: today,
+  }, { email: s.contact_email, whatsapp: s.contact_whatsapp, hours: s.contact_hours }), preview: true, model: true });
+}
 
 const PUBLISHED = ["enviada", "visualizada", "aceita", "recusada"];
 
@@ -19,6 +39,8 @@ async function load(req) {
 }
 
 export default handler(["GET", "POST"], async (req, res) => {
+  const m = new URL(req.url, "http://x").searchParams.get("model");
+  if (m && req.method === "GET") return model(req, res, m.replace(/[^a-z0-9-]/g, "").slice(0, 40));
   const { p, admin } = await load(req);
   if (!PUBLISHED.includes(p.status) && !admin)
     return send(res, 202, { pending: true, number: p.number, client: { name: p.client_name } });
