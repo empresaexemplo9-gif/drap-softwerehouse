@@ -11,7 +11,7 @@ import { requireAdmin } from "../../lib/auth.js";
 import { USERS, adminCatalog, publicCatalog, estimate, normalizeBrief, totalsOf } from "../../lib/pricing.js";
 import { newToken, DEFAULT_TERMS, cleanItems, deliverProposal, proposalUrl } from "../../lib/proposals.js";
 import { mailConfigured } from "../../lib/mail.js";
-import { platformProposal, platformEstimate, PLATFORM_TERMS } from "../../lib/platform-plans.js";
+import { platformProposal, platformEstimate, planOf, PLATFORM_TERMS } from "../../lib/platform-plans.js";
 
 async function platformRow(id) {
   const { rows: [pl] } = await query("select * from platforms where id = $1", [String(id)]);
@@ -117,7 +117,14 @@ export default handler(["GET", "POST", "PATCH"], async (req, res) => {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) throw httpError(400, "E-mail do cliente inválido.");
     add("client_email", e);
   }
-  if ("items" in b) add("items", JSON.stringify(cleanItems(b.items)));
+  if ("items" in b) {
+    const items = cleanItems(b.items);
+    // Proposta de plataforma do catálogo: não cobra à parte o que o produto já entrega
+    const covered = p.platform?.covered || planOf(p.platform_id || "")?.covered || {};
+    const dup = p.platform_id ? items.find((i) => i.kind === "module" && covered[i.key.replace(/-[a-z0-9]{3}$/, "")]) : null;
+    if (dup) throw httpError(400, `"${dup.name}" já vem incluído no ${p.platform?.name || "produto"} (${covered[dup.key.replace(/-[a-z0-9]{3}$/, "")]}). Remova o item ou mude para "Base" com valor zero.`);
+    add("items", JSON.stringify(items));
+  }
   if ("discount_pct" in b) add("discount_pct", Math.max(0, Math.min(60, Number(b.discount_pct) || 0)));
   if ("weeks" in b) add("weeks", Math.max(1, Math.min(104, parseInt(b.weeks, 10) || 8)));
   if ("show_market" in b) add("show_market", Boolean(b.show_market));

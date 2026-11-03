@@ -193,7 +193,7 @@
               <div class="adm-ed__add">
                 <select id="ed-add"><option value="">+ Adicionar do catálogo…</option>
                   <optgroup label="Plataforma base">${Object.entries(catalog).filter(([, c]) => c.kind === "core").map(([k, c]) => `<option value="${k}">${esc(c.name)} · ${brl(c.setup)}</option>`).join("")}</optgroup>
-                  <optgroup label="Módulos adicionais">${Object.entries(catalog).filter(([, c]) => c.kind === "module").map(([k, c]) => `<option value="${k}">${esc(c.name)} · ${brl(c.setup)}</option>`).join("")}</optgroup>
+                  <optgroup label="Módulos adicionais">${Object.entries(catalog).filter(([k, c]) => c.kind === "module" && !p.platform?.covered?.[k]).map(([k, c]) => `<option value="${k}">${esc(c.name)} · ${brl(c.setup)}</option>`).join("")}</optgroup>
                   <option value="__custom">Item personalizado</option></select>
               </div></div>
             <p class="adm-muted">Itens “Base” formam a plataforma (sempre inclusos). “Módulos” aparecem com valor próprio e o cliente pode ativar ou desativar; marque os que entram no total inicial. Valores em reais.</p>
