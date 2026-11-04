@@ -232,6 +232,7 @@
     const payload = {
       ...(PF ? { platform_id: PF.id } : {}),
       website: f.website.value,
+      source: window.DRAP_ATTR?.() || null,
       consent: $("#b-consent").checked,
       contact: { name: f.name.value.trim(), email: f.email.value.trim(), company: f.company.value.trim(), phone: f.phone.value.trim(), company_size: f.company_size.value },
       brief: { ...state, segment: f.segment.value, project_name: f.project_name.value.trim(), description: f.description.value.trim(),

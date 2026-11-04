@@ -191,3 +191,9 @@
 .adm-dlg select { width: 100%; font: 14px var(--font-sans); color: var(--text); background: var(--glass-bg-soft); border: 1px solid var(--glass-line); border-radius: 9px; padding: 8px 10px; }
 
 .adm-envwarn { margin: 0 0 18px; padding: 14px 16px; border-radius: 12px; font-size: 14px; background: color-mix(in srgb, var(--err) 12%, transparent); border: 1px solid color-mix(in srgb, var(--err) 35%, transparent); }
+
+/* Depoimentos */
+.adm-tlist { display: grid; gap: 12px; }
+.adm-titem { padding: 18px 20px; }
+.adm-titem.is-pub { border-color: color-mix(in srgb, var(--ok) 40%, var(--glass-line)); }
+.adm-titem__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }

@@ -3,6 +3,7 @@
 // GET  /api/proposals?model=<plataforma> → modelo da proposta padrão de uma plataforma do catálogo
 //                                (só para a equipe logada; nada é gravado)
 // POST /api/proposals?token=…  → { action: "accept", modules: [keys] } | { action: "decline", reason }
+//                                | { action: "testimonial", name, role, company, quote, rating, consent } (só proposta aceita)
 import { query } from "../lib/db.js";
 import { handler, send, readJson, httpError } from "../lib/http.js";
 import { readSession } from "../lib/auth.js";
@@ -57,9 +58,26 @@ export default handler(["GET", "POST"], async (req, res) => {
   }
 
   if (admin) throw httpError(403, "Pré-visualização da equipe: a resposta deve partir do cliente.");
+  const b = await readJson(req, 4_000);
+  if (b.action === "testimonial") {
+    // Só quem é cliente (proposta aceita) deixa depoimento pelo link; entra sem publicar
+    if (p.status !== "aceita") throw httpError(403, "O depoimento fica disponível depois que a proposta é aceita.");
+    const t = (v, max) => String(v ?? "").trim().slice(0, max) || null;
+    const quote = t(b.quote, 1200), name = t(b.name, 120);
+    if (!name || name.length < 2) throw httpError(400, "Informe seu nome.");
+    if (!quote || quote.length < 20) throw httpError(400, "Escreva pelo menos uma frase (20 caracteres).");
+    const rating = Number.isInteger(b.rating) && b.rating >= 1 && b.rating <= 5 ? b.rating : null;
+    await query(
+      `insert into testimonials (proposal_id, platform_id, name, role, company, quote, rating, consent)
+       values ($1, $2, $3, $4, $5, $6, $7, $8)
+       on conflict (proposal_id) where proposal_id is not null
+       do update set name = excluded.name, role = excluded.role, company = excluded.company, quote = excluded.quote,
+                     rating = excluded.rating, consent = excluded.consent, published = false`,
+      [p.id, p.platform_id, name, t(b.role, 120), t(b.company, 120) || p.client_company, quote, rating, Boolean(b.consent)]);
+    return send(res, 201, { ok: true });
+  }
   if (["aceita", "recusada"].includes(p.status)) throw httpError(409, "Esta proposta já foi respondida.");
   if (new Date(p.valid_until) < new Date(new Date().toISOString().slice(0, 10))) throw httpError(410, "Esta proposta expirou. Fale com a gente para atualizá-la.");
-  const b = await readJson(req, 4_000);
   if (b.action === "accept") {
     const optional = new Set(p.items.filter((i) => i.kind === "module").map((i) => i.key));
     const chosen = [...new Set((Array.isArray(b.modules) ? b.modules : []).map(String))].filter((k) => optional.has(k));

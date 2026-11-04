@@ -1253,3 +1253,28 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
 .pd-quote__steps b { color: var(--c-strong, var(--accent-text)); font-weight: 500; }
 :root[data-theme="dark"] .pd-quote__steps b { color: var(--c-soft, var(--accent-text)); }
 @media (max-width: 920px) { .pd-quote { grid-template-columns: 1fr; padding: 28px 22px; } }
+
+/* ==========================================================================
+   Marketing: WhatsApp flutuante, depoimentos (prova social) e chamada do portfólio
+   ========================================================================== */
+.wa-fab { position: fixed; right: 20px; bottom: 20px; z-index: 60; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px 12px 14px;
+  border-radius: 999px; background: #1FAF54; color: #fff; text-decoration: none; font: 600 14px var(--font-sans);
+  box-shadow: 0 14px 30px -12px rgba(31, 175, 84, .7), 0 0 0 1px rgba(255,255,255,.15) inset; transition: transform .25s var(--ease), box-shadow .25s; }
+.wa-fab:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -12px rgba(31, 175, 84, .8); }
+.wa-fab svg { width: 22px; height: 22px; flex: none; }
+@media (max-width: 640px) { .wa-fab span { display: none; } .wa-fab { padding: 14px; right: 14px; bottom: 14px; } }
+@media print { .wa-fab { display: none !important; } }
+
+.proof-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.proof-quote { margin: 0; padding: 22px; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-line); box-shadow: var(--glass-shadow); display: grid; gap: 14px; align-content: space-between; }
+.proof-quote blockquote { margin: 0; font: 400 19px/1.45 var(--font-serif); color: var(--text); }
+.proof-quote figcaption { display: grid; gap: 2px; font-size: 14px; }
+.proof-quote figcaption small { color: var(--text-mute); font-size: 12.5px; }
+.proof-stars { color: var(--accent); letter-spacing: 2px; font-size: 13px; }
+.home-voices { margin-top: 36px; }
+.home-voices .section__index { margin-bottom: 16px; }
+
+.pf-band { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 28px; padding: 22px 26px; border-radius: 16px;
+  border: 1px solid var(--glass-line); background: var(--glass-bg); box-shadow: var(--glass-shadow); }
+.pf-band p { margin: 0; color: var(--text-dim); max-width: 640px; }
+.pf-band b { color: var(--text); }

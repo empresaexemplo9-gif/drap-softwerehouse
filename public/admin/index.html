@@ -53,6 +53,7 @@
       <nav class="adm-tabs" role="tablist">
         <button role="tab" class="is-active" data-tab="leads">Leads <b id="badge-new"></b></button>
         <button role="tab" data-tab="proposals">Propostas <b id="badge-review"></b></button>
+        <button role="tab" data-tab="testimonials">Depoimentos <b id="badge-testi"></b></button>
         <button role="tab" data-tab="platforms">Plataformas</button>
         <button role="tab" data-tab="settings">Configurações</button>
       </nav>
@@ -97,6 +98,14 @@
         <div id="pr-edit-view" hidden></div>
       </section>
 
+      <!-- DEPOIMENTOS (prova social do site e do portfólio) -->
+      <section data-panel="testimonials" hidden>
+        <p class="adm-muted">Depoimentos aparecem na home, no portfólio e na página da plataforma <b>só depois de publicados</b> e com a autorização do cliente.
+          Para pedir um, abra uma proposta <b>aceita</b> e use “Pedir depoimento”: o cliente responde por um link próprio.</p>
+        <div class="adm-toolbar"><button class="btn btn--primary btn--sm" id="ts-new"><span class="btn__label">Cadastrar depoimento recebido</span><span class="btn__icon" aria-hidden="true">+</span></button></div>
+        <div class="adm-tlist" id="ts-list"></div>
+      </section>
+
       <!-- PLATAFORMAS -->
       <section data-panel="platforms" hidden>
         <p class="adm-muted">Edite o catálogo exibido na home. Alterações aparecem no site imediatamente.</p>
@@ -117,5 +126,6 @@
   <script src="/custom-icons.js"></script>
   <script src="/admin/admin.js"></script>
   <script src="/admin/proposals.js"></script>
+  <script src="/admin/testimonials.js"></script>
 </body>
 </html>

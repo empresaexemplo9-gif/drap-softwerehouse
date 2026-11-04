@@ -75,7 +75,7 @@ export default handler(["GET", "POST"], async (req, res) => {
     `insert into leads (name, email, phone, company, platform_id, interest, message, source, ip_hash, status)
      values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id`,
     [client.name, client.email, client.phone, client.company, pl?.id || null, pl ? pl.id : "sob-medida",
-     (brief.description || brief.notes || "").slice(0, 2000) || null, pl ? "questionario-plataforma" : "questionario", ip, auto ? "proposta" : "novo"]);
+     (brief.description || brief.notes || "").slice(0, 2000) || null, `${pl ? "questionario-plataforma" : "questionario"}${b.source ? " · " + String(b.source).slice(0, 160) : ""}`.slice(0, 200), ip, auto ? "proposta" : "novo"]);
 
   const { rows: [p] } = await query(
     `insert into proposals (token, lead_id, status, complexity, score, reasons, auto, client_name, client_email, client_phone,

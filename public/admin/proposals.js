@@ -235,6 +235,7 @@
               <a class="btn btn--ghost btn--sm" href="${esc(p.url)}?print=1" target="_blank" rel="noopener"><span class="btn__label">PDF</span></a>
               <button class="btn btn--ghost btn--sm" id="ed-copy"><span class="btn__label">Link</span></button>
             </div>
+            ${p.status === "aceita" ? `<button class="btn btn--ghost btn--sm btn--block" id="ed-testi" type="button"><span class="btn__label">Pedir depoimento ao cliente</span></button>` : ""}
             ${p.brief?.description || p.platform_id ? `<button class="btn btn--ghost btn--sm btn--block" id="ed-reprice"><span class="btn__label">Recalcular pela tabela de preços</span></button>` : ""}
             <p class="adm-muted-s">${p.sent_at ? `Enviada em ${A().fmtDate(p.sent_at)}.` : "Ainda não enviada."} ${p.view_count ? `Vista ${p.view_count}× (primeira em ${A().fmtDate(p.viewed_at)}).` : ""}
               ${p.decided_at ? `<br>Respondida em ${A().fmtDate(p.decided_at)}${p.accepted_keys?.length ? ` com: ${p.accepted_keys.map((k) => esc(p.items.find((i) => i.key === k)?.name || k)).join(", ")}` : ""}.` : ""}</p>
@@ -320,6 +321,13 @@
       catch (err) { A().toast("Erro: " + err.message); }
     }
     if (e.target.closest("#ed-send")) sendDialog();
+    if (e.target.closest("#ed-testi")) {
+      const link = cur.url.replace("/proposta/", "/depoimento/");
+      const first = String(cur.client_name).split(" ")[0];
+      const msg = `Olá, ${first}! Que bom ter vocês com a DRAP. Se puder, conte em poucas linhas como está sendo a experiência: leva 1 minuto e ajuda muito outras empresas a nos conhecerem. ${link}`;
+      try { await navigator.clipboard.writeText(msg); A().toast("Mensagem com o link copiada: cole no WhatsApp ou e-mail"); }
+      catch { prompt("Copie a mensagem para o cliente:", msg); }
+    }
   });
 
   function sendDialog() {

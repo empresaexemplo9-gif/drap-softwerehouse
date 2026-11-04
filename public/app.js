@@ -11,6 +11,17 @@
     logo: r.logo_svg ? { svg: r.logo_svg } : r.logo_url ? { src: r.logo_url } : null,
     preview: r.preview_image ? { image: r.preview_image } : { key: r.preview_key || r.id },
   });
+  /* Depoimentos aprovados no painel (prova social): a faixa só aparece quando houver algum */
+  function showTestimonials(list) {
+    const box = document.getElementById("home-voices");
+    if (!box || !list.length) return;
+    const e = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    document.getElementById("home-quotes").innerHTML = list.slice(0, 3).map((t) => `<figure class="proof-quote">
+      <blockquote>“${e(t.quote)}”</blockquote>
+      <figcaption>${t.rating ? `<span class="proof-stars" aria-label="${t.rating} de 5">${"★".repeat(t.rating)}</span>` : ""}
+        <b>${e(t.name)}</b><small>${e([t.role, t.company, t.platform_name].filter(Boolean).join(" · "))}</small></figcaption></figure>`).join("");
+    box.hidden = false;
+  }
   let platforms = window.DRAP_PLATFORMS || [];
   let settings = {};
   let online = false; // true quando o catálogo veio do banco (API funcionando)
@@ -18,6 +29,7 @@
     const data = await api.catalog();
     if (Array.isArray(data?.platforms) && data.platforms.length) platforms = data.platforms.map(fromRow);
     settings = data?.settings || {};
+    showTestimonials(data?.testimonials || []);
     online = true;
   } catch { /* API/banco indisponível: segue com o catálogo local */ }
   $$("[data-setting]").forEach((el) => { if (settings[el.dataset.setting]) el.textContent = settings[el.dataset.setting]; });
@@ -202,7 +214,7 @@ ${renderPreview(p)}
       platform_id: isPlatform ? choice : null,
       interest: isPlatform ? null : choice,
       message: v("message"),
-      source: (utm || document.referrer || "direto").slice(0, 200),
+      source: (window.DRAP_ATTR?.() || utm || document.referrer || "direto").slice(0, 200),
       website: form.elements.website.value, // campo-isca anti-robô (validado no servidor)
     };
 

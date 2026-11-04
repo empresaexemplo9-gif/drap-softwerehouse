@@ -41,8 +41,8 @@
       <nav class="nav__links" aria-label="Principal">
         <a href="#plataformas"><span>01</span>Plataformas</a>
         <a href="#sob-medida"><span>02</span>Sob medida</a>
-        <a href="#servicos"><span>03</span>Serviços</a>
-        <a href="#processo"><span>04</span>Processo</a>
+        <a href="/portfolio"><span>03</span>Portfólio</a>
+        <a href="#servicos"><span>04</span>Serviços</a>
         <a href="#contato"><span>05</span>Contato</a>
       </nav>
 
@@ -149,6 +149,16 @@
       <div class="filters reveal" role="tablist" aria-label="Filtrar plataformas" id="filters"></div>
 
       <div class="grid" id="platform-grid"></div>
+
+      <div class="pf-band reveal">
+        <p><b>Quer ver cada plataforma em detalhe?</b> No portfólio, cada uma vira um case: o desafio do setor, o que construímos e o que muda para quem usa.</p>
+        <a class="btn btn--ghost" href="/portfolio"><span class="btn__label">Ver portfólio completo</span><span class="btn__icon" aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="home-voices" id="home-voices" hidden>
+        <div class="section__index mono"><span>★</span> / Quem usa</div>
+        <div class="proof-quotes" id="home-quotes"></div>
+      </div>
     </section>
 
     <!-- ============ SOB MEDIDA (S/03 em destaque) ============ -->
@@ -328,6 +338,7 @@
 
   <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="/marketing.js"></script>
   <script src="/api.js"></script>
   <script src="/platforms.js"></script>
   <script src="/previews.js"></script>

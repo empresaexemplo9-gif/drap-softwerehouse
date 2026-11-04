@@ -23,6 +23,10 @@
       "destination": "/plataforma"
     },
     {
+      "source": "/depoimento/:token",
+      "destination": "/depoimento"
+    },
+    {
       "source": "/proposta/modelo/:id",
       "destination": "/proposta"
     },
@@ -80,7 +84,7 @@
       ]
     },
     {
-      "source": "/proposta(.*)",
+      "source": "/(proposta|depoimento)(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",
