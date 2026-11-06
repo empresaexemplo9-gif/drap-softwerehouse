@@ -15,6 +15,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/servicos/:id",
+      "destination": "/servico"
+    },
+    {
       "source": "/plataformas/:id/proposta",
       "destination": "/sob-medida"
     },

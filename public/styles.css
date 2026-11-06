@@ -1307,3 +1307,11 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
 
 /* Brilhos decorativos não geram rolagem lateral (clip mantém os elementos "sticky") */
 html, body { overflow-x: clip; }
+
+/* Cards de serviço clicáveis (levam ao painel /servicos/<id>) */
+a.service { display: block; color: inherit; text-decoration: none; cursor: pointer; }
+.service__more { display: inline-flex; align-items: center; gap: 6px; margin-top: 22px; font-size: 14px; font-weight: 600; color: var(--accent-text);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); padding-bottom: 2px; }
+.service__more i { font-style: normal; transition: transform .25s var(--ease); }
+a.service:hover .service__more i { transform: translateX(4px); }
+a.service:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }

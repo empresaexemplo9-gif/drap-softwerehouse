@@ -113,9 +113,31 @@ export function seo(root, dist) {
     writeFileSync(join(dist, "plataformas", `${p.id}.html`), html);
   }
 
+  // Página estática por serviço (painel explicativo e tutorial), a partir de servico.html
+  const services = load(join(root, "public/services.js"), "DRAP_SERVICES") || {};
+  const stpl = readFileSync(join(root, "public/servico.html"), "utf8");
+  mkdirSync(join(dist, "servicos"), { recursive: true });
+  for (const [sid, sv] of Object.entries(services)) {
+    const path = `/servicos/${sid}`;
+    const jsonld = [
+      { "@context": "https://schema.org", "@type": "Service", name: sv.name, description: clip(sv.lead, 300), url: `${base}${path}`, areaServed: "BR",
+        provider: { "@type": "Organization", name: "DRAP SoftwareHouse & Business", url: base } },
+      { "@context": "https://schema.org", "@type": "HowTo", name: `Como funciona: ${sv.name}`,
+        step: sv.steps.map(([t, d], i) => ({ "@type": "HowToStep", position: i + 1, name: t, text: d })) },
+      { "@context": "https://schema.org", "@type": "FAQPage",
+        mainEntity: sv.faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
+    ];
+    writeFileSync(join(dist, "servicos", `${sid}.html`), withHead(stpl, {
+      title: `${sv.name}: como funciona e tutorial · DRAP SoftwareHouse & Business`,
+      description: clip(`${sv.headline} Veja o passo a passo e as boas práticas para uso profissional.`, 158),
+      path, image: og("drap"), jsonld,
+    }, base));
+  }
+
   // sitemap.xml e robots.txt
   const today = new Date().toISOString().slice(0, 10);
-  const urls = ["/", "/portfolio", "/sob-medida", ...platforms.flatMap((p) => [`/plataformas/${p.id}`, `/plataformas/${p.id}/proposta`])];
+  const urls = ["/", "/portfolio", "/sob-medida", ...Object.keys(services).map((k) => `/servicos/${k}`),
+    ...platforms.flatMap((p) => [`/plataformas/${p.id}`, `/plataformas/${p.id}/proposta`])];
   writeFileSync(join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${base}${u}</loc><lastmod>${today}</lastmod><changefreq>${u === "/" || u === "/portfolio" ? "weekly" : "monthly"}</changefreq><priority>${u === "/" ? "1.0" : u.endsWith("/proposta") ? "0.6" : "0.8"}</priority></url>`).join("\n")}
@@ -130,5 +152,5 @@ Disallow: /depoimento/
 
 Sitemap: ${base}/sitemap.xml
 `);
-  console.log(`seo: ${pages.length} páginas, ${platforms.length} páginas de plataforma, sitemap com ${urls.length} endereços (${base})`);
+  console.log(`seo: ${pages.length} páginas, ${platforms.length} páginas de plataforma, ${Object.keys(services).length} de serviço, sitemap com ${urls.length} endereços (${base})`);
 }
