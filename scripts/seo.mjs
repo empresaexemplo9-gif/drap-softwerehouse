@@ -136,7 +136,7 @@ export function seo(root, dist) {
 
   // sitemap.xml e robots.txt
   const today = new Date().toISOString().slice(0, 10);
-  const urls = ["/", "/portfolio", "/sob-medida", ...Object.keys(services).map((k) => `/servicos/${k}`),
+  const urls = ["/", "/portfolio", "/sob-medida", "/agendar", ...Object.keys(services).map((k) => `/servicos/${k}`),
     ...platforms.flatMap((p) => [`/plataformas/${p.id}`, `/plataformas/${p.id}/proposta`])];
   writeFileSync(join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -149,6 +149,7 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /proposta/
 Disallow: /depoimento/
+Disallow: /agendar/
 
 Sitemap: ${base}/sitemap.xml
 `);

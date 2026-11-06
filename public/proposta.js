@@ -294,6 +294,9 @@
           ${!decided && !expired && !P.preview ? `<div class="pp-close__act">
             <button type="button" class="pp-btn pp-btn--gold pp-btn--lg" id="pp-accept">Aceitar proposta · <span id="k-accept">${brl(t.setup)}</span></button>
             <button type="button" class="pp-btn pp-btn--link" id="pp-decline">Não tenho interesse agora</button></div>` : ""}
+          ${!P.model ? `<div class="pp-meet">
+            <p><b>Prefere conversar antes de decidir?</b> Agende uma reunião de negociação, online ou presencial, para revisar escopo, módulos e condições.</p>
+            <a class="pp-btn pp-btn--petrol" href="/agendar?proposta=${encodeURIComponent(token)}">Agendar reunião</a></div>` : ""}
         </div>
         <div class="pp-close__contact">
           <p class="pp-k">FALE COM A DRAP</p>
@@ -316,6 +319,8 @@
     $("#pp-num").textContent = `Proposta ${P.number}${PL ? " · " + PL.name : ""}`;
     $("#pp-bar").hidden = false;
     $("#pp-go-accept").hidden = decided || expired || P.preview;
+    const mt = $("#pp-meet-top");
+    if (mt) { mt.href = `/agendar?proposta=${encodeURIComponent(token)}`; mt.hidden = Boolean(P.model) || P.status === "recusada"; }
   }
 
   function refresh() {

@@ -197,3 +197,22 @@
 .adm-titem { padding: 18px 20px; }
 .adm-titem.is-pub { border-color: color-mix(in srgb, var(--ok) 40%, var(--glass-line)); }
 .adm-titem__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* Reuniões */
+.adm-mlist { display: grid; gap: 12px; }
+.adm-mitem { display: grid; grid-template-columns: 170px 1fr 360px; gap: 20px; padding: 18px 20px; align-items: start; }
+.adm-mitem--solicitada { border-color: color-mix(in srgb, var(--accent) 50%, var(--glass-line)); }
+.adm-mitem--cancelada { opacity: .65; }
+.adm-mitem__when { display: grid; gap: 4px; justify-items: start; }
+.adm-mitem__when b { font-size: 16px; text-transform: capitalize; }
+.adm-mitem__when small { color: var(--text-mute); }
+.adm-mitem__who { display: grid; gap: 4px; font-size: 14px; min-width: 0; }
+.adm-mitem__who small { color: var(--text-mute); font-size: 12.5px; }
+.adm-mitem__who a { color: var(--accent-2-text); }
+.adm-mitem__notes { margin: 6px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; }
+.adm-mitem__edit { display: grid; gap: 8px; }
+.adm-mitem__edit label { display: grid; gap: 4px; font: 10.5px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-mute); }
+.adm-mitem__edit input, .adm-mitem__edit textarea { font: 13.5px var(--font-sans); color: var(--text); background: var(--glass-bg-soft); border: 1px solid var(--glass-line); border-radius: 8px; padding: 7px 9px; }
+.adm-mitem__act { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.adm-mitem .pf-link { background: none; border: 0; padding: 0; font-size: 11px; color: var(--text-mute); text-decoration: underline; cursor: pointer; }
+@media (max-width: 1100px) { .adm-mitem { grid-template-columns: 1fr; } }

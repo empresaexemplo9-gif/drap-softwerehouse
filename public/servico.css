@@ -146,3 +146,5 @@
   .sv-flow > i { display: none; }
   .sv-table { font-size: 13.5px; }
 }
+
+.sv-final__act { display: flex; flex-wrap: wrap; gap: 10px; }

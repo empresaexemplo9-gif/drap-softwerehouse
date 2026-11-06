@@ -53,6 +53,7 @@
       <nav class="adm-tabs" role="tablist">
         <button role="tab" class="is-active" data-tab="leads">Leads <b id="badge-new"></b></button>
         <button role="tab" data-tab="proposals">Propostas <b id="badge-review"></b></button>
+        <button role="tab" data-tab="meetings">Reuniões <b id="badge-meet"></b></button>
         <button role="tab" data-tab="testimonials">Depoimentos <b id="badge-testi"></b></button>
         <button role="tab" data-tab="platforms">Plataformas</button>
         <button role="tab" data-tab="settings">Configurações</button>
@@ -98,6 +99,19 @@
         <div id="pr-edit-view" hidden></div>
       </section>
 
+      <!-- REUNIÕES (fase de negociação: agendadas pelo cliente em /agendar) -->
+      <section data-panel="meetings" hidden>
+        <p class="adm-muted">Reuniões marcadas pelos clientes em <b>/agendar</b> ou pelo botão da proposta. Confirme (online exige o link da videochamada), remarque ou cancele: o cliente é avisado por e-mail quando o envio está configurado.
+          A agenda (dias, horários, duração, endereço) fica em Configurações.</p>
+        <div class="adm-toolbar">
+          <select id="mt-filter"><option value="proximas">Próximas (solicitadas e confirmadas)</option><option value="solicitada">Solicitadas</option><option value="confirmada">Confirmadas</option><option value="realizada">Realizadas</option><option value="cancelada">Canceladas</option><option value="todas">Todas</option></select>
+          <button class="btn btn--ghost btn--sm" id="mt-refresh"><span class="btn__label">Atualizar</span></button>
+          <button class="btn btn--ghost btn--sm" id="mt-copy-link"><span class="btn__label">Copiar link da agenda</span></button>
+        </div>
+        <p class="adm-muted adm-note" id="mt-mailnote" hidden>Envio de e-mail desativado: confirme também pelo WhatsApp do cliente (link em cada reunião).</p>
+        <div class="adm-mlist" id="mt-list"></div>
+      </section>
+
       <!-- DEPOIMENTOS (prova social do site e do portfólio) -->
       <section data-panel="testimonials" hidden>
         <p class="adm-muted">Depoimentos aparecem na home, no portfólio e na página da plataforma <b>só depois de publicados</b> e com a autorização do cliente.
@@ -127,5 +141,6 @@
   <script src="/admin/admin.js"></script>
   <script src="/admin/proposals.js"></script>
   <script src="/admin/testimonials.js"></script>
+  <script src="/admin/meetings.js"></script>
 </body>
 </html>

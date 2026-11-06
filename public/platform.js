@@ -166,6 +166,7 @@
             licença mensal, cronograma e investimento, na identidade do ${esc(p.name)}. Por link, PDF ou e-mail.</p>
           <a href="/plataformas/${esc(p.id)}/proposta" class="btn btn--primary"><span class="btn__label">Montar minha proposta</span><span class="btn__icon" aria-hidden="true">→</span></a>
           <a href="/portfolio#case-${esc(p.id)}" class="btn btn--ghost"><span class="btn__label">Ver o case no portfólio</span></a>
+          <a href="/agendar?plataforma=${esc(p.id)}" class="btn btn--ghost"><span class="btn__label">Agendar reunião</span></a>
         </div>
         <ol class="pd-quote__steps mono">
           <li><b>01</b>Sobre a sua empresa</li>

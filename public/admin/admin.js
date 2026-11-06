@@ -192,6 +192,14 @@
     ["contact_email", "E-mail de contato"],
     ["contact_whatsapp", "WhatsApp"],
     ["contact_hours", "Horário de atendimento"],
+    ["meeting_days", "Agenda · dias da semana (0 = dom … 6 = sáb, separados por vírgula)"],
+    ["meeting_start", "Agenda · início (HH:MM)"],
+    ["meeting_end", "Agenda · fim (HH:MM)"],
+    ["meeting_lunch", "Agenda · intervalo sem reuniões (HH:MM-HH:MM, vazio para nenhum)"],
+    ["meeting_duration", "Agenda · duração da reunião (minutos)"],
+    ["meeting_notice_hours", "Agenda · antecedência mínima (horas)"],
+    ["meeting_horizon_days", "Agenda · até quantos dias à frente"],
+    ["meeting_address", "Agenda · endereço para reuniões presenciais"],
   ];
   const AUTO = "proposal_auto_send";
   async function loadSettings() {
@@ -206,7 +214,7 @@
   }
   $("#settings-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const body = Object.fromEntries(SETTINGS.map(([k]) => [k, e.target.elements[k].value.trim()]).filter(([, v]) => v));
+    const body = Object.fromEntries(SETTINGS.map(([k]) => [k, e.target.elements[k].value.trim()]).filter(([k, v]) => v || k === "meeting_lunch"));
     body[AUTO] = e.target.elements[AUTO].checked ? "sim" : "nao";
     try { await call("PUT", "settings", body); toast("Configurações salvas"); }
     catch (err) { toast("Erro: " + err.message); }
