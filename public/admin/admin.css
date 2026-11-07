@@ -216,3 +216,9 @@
 .adm-mitem__act { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .adm-mitem .pf-link { background: none; border: 0; padding: 0; font-size: 11px; color: var(--text-mute); text-decoration: underline; cursor: pointer; }
 @media (max-width: 1100px) { .adm-mitem { grid-template-columns: 1fr; } }
+
+/* Leads: responder por e-mail e status do encaminhamento */
+.adm-table td a.adm-reply { font-weight: 600; color: var(--accent-text); margin-top: 2px; }
+.adm-fw { font: 10.5px var(--font-mono) !important; }
+.adm-fw.ok { color: var(--ok) !important; }
+.adm-fw.err { color: var(--err) !important; }

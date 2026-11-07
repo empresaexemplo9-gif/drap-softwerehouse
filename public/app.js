@@ -219,14 +219,16 @@ ${renderPreview(p)}
     };
 
     if (!online) {
-      setStatus("err", "✕ envio indisponível no momento. Fale conosco pelo e-mail ao lado.");
+      const to = settings.contact_email || "drap@drap.app.br";
+      status.className = "form__status mono err";
+      status.innerHTML = `✕ envio indisponível agora. <a href="mailto:${to}?subject=${encodeURIComponent("Quero falar com um especialista")}&body=${encodeURIComponent(`${lead.name || ""}\n${lead.company || ""}\n${lead.phone || ""}\n\n${lead.message || ""}`)}">Enviar pelo seu e-mail</a>`;
       return;
     }
     btn.disabled = true; btn.classList.add("is-loading");
     setStatus("", "› enviando…");
     try {
       await api.sendLead(lead);
-      setStatus("ok", "✓ solicitação registrada. Retornaremos em até 24h úteis.");
+      setStatus("ok", `✓ mensagem enviada para a equipe da DRAP. Responderemos no e-mail ${lead.email} em até 24h úteis.`);
       form.reset();
     } catch (err) {
       setStatus("err", `✕ ${err.message || "não foi possível enviar. Tente novamente."}`);

@@ -29,6 +29,15 @@
   const STATUS = { novo: "Novo", em_contato: "Em contato", proposta: "Proposta", ganho: "Ganho", perdido: "Perdido" };
   const fmtDate = (iso) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
   const digits = (s) => String(s || "").replace(/\D/g, "");
+  // E-mail de contato da DRAP (Configurações) e resposta pronta ao cliente, com a mensagem dele citada
+  let contactEmail = "drap@drap.app.br";
+  const CONTACT = () => contactEmail;
+  const replyLink = (l) => {
+    const first = String(l.name || "").split(" ")[0];
+    const quote = l.message ? `\n\n\n--- Mensagem enviada pelo site em ${fmtDate(l.created_at)} ---\n${l.message}` : "";
+    const body = `Olá, ${first}!\n\nObrigado pelo contato com a DRAP.${quote}`;
+    return `mailto:${encodeURIComponent(l.email)}?subject=${encodeURIComponent("Re: seu contato com a DRAP")}&body=${encodeURIComponent(body)}`;
+  };
 
   let leads = [], platforms = [];
 
@@ -103,6 +112,8 @@
           <td class="mono adm-nowrap">${fmtDate(l.created_at)}</td>
           <td><b>${esc(l.name)}</b>${l.company ? `<small>${esc(l.company)}</small>` : ""}
             <a href="mailto:${esc(l.email)}">${esc(l.email)}</a>
+            <a class="adm-reply" href="${replyLink(l)}">✉ Responder por e-mail</a>
+            ${l.forwarded_at ? `<small class="adm-fw ok">chegou em ${esc(CONTACT())} (${esc(l.forwarded_via)})</small>` : l.forward_error ? `<small class="adm-fw err" title="${esc(l.forward_error)}">não chegou no e-mail: responda por aqui</small>` : ""}
             ${l.phone ? `<a href="https://wa.me/${digits(l.phone)}" target="_blank" rel="noopener">WhatsApp ${esc(l.phone)}</a>` : ""}
             <button type="button" class="adm-mini" data-new-proposal>+ Proposta</button></td>
           <td>${esc(platformName(l.platform_id) || l.interest || "—")}<small class="mono">${esc(l.source || "")}</small></td>
@@ -204,7 +215,7 @@
   const AUTO = "proposal_auto_send";
   async function loadSettings() {
     let map;
-    try { map = await call("GET", "settings"); }
+    try { map = await call("GET", "settings"); if (map.contact_email) contactEmail = map.contact_email; }
     catch (err) { return toast("Erro ao carregar configurações: " + err.message); }
     $("#settings-form").innerHTML = SETTINGS.map(([k, label]) => `
       <div class="field"><label class="mono" for="s-${k}">${label}</label><input id="s-${k}" name="${k}" value="${esc(map[k] || "")}" maxlength="500" /></div>`).join("") +
