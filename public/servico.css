@@ -121,7 +121,7 @@
 /* fechamento */
 .sv-final { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding: clamp(28px, 3vw, 48px); border-radius: 22px; margin-bottom: 40px;
   background: radial-gradient(80% 120% at 100% 0%, color-mix(in srgb, var(--brand-mark) 18%, transparent), transparent 60%), var(--glass-bg); border: 1px solid var(--glass-line); box-shadow: var(--glass-shadow); }
-.sv-final span { font-size: 11px; letter-spacing: .14em; color: var(--accent-text); }
+.sv-final > div > span { font-size: 11px; letter-spacing: .14em; color: var(--accent-text); }
 .sv-final h2 { margin: 8px 0 8px; font-size: clamp(26px, 2.4vw, 40px); font-weight: 500; letter-spacing: -.03em; }
 .sv-final p { margin: 0; color: var(--text-dim); }
 .sv-others-wrap > span { display: block; font-size: 11px; letter-spacing: .14em; color: var(--text-mute); margin-bottom: 12px; }

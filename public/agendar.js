@@ -99,6 +99,7 @@
     $("#ag-lead").textContent = "Reunião de negociação da sua proposta: escolha o formato e um horário livre. Já preenchemos seus dados.";
   }
   if (params.get("modo") === "presencial") f.elements.mode.value = "presencial";
+  if (params.get("assunto") && !f.elements.topic.value) f.elements.topic.value = params.get("assunto").slice(0, 120);
 
   // formato
   const syncMode = () => {

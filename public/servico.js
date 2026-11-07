@@ -118,7 +118,7 @@
           <div><span class="mono">PRÓXIMO PASSO</span><h2>${esc(S.cta.title)}</h2><p>${esc(S.cta.text)}</p></div>
           <div class="sv-final__act">
             <a class="btn btn--primary" href="${esc(S.cta.href)}"><span class="btn__label">${esc(S.cta.label)}</span><span class="btn__icon" aria-hidden="true">→</span></a>
-            <a class="btn btn--ghost" href="/agendar"><span class="btn__label">Agendar reunião</span></a>
+            <a class="btn btn--ghost" href="/agendar?assunto=${encodeURIComponent(S.name)}"><span class="btn__label">Agendar reunião</span></a>
           </div>
         </section>
 
