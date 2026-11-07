@@ -20,7 +20,7 @@ on conflict (id) do update set
   sort_order = excluded.sort_order;
 
 insert into site_settings (key, value) values
-  ($q$contact_email$q$, $q$contato@drap.com.br$q$),
+  ($q$contact_email$q$, $q$drap@drap.app.br$q$),
   ($q$contact_whatsapp$q$, $q$+55 (00) 00000-0000$q$),
   ($q$contact_hours$q$, $q$Seg–Sex · 09h–18h$q$)
 on conflict (key) do nothing;
