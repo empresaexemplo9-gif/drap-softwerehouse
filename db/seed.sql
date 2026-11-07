@@ -21,6 +21,6 @@ on conflict (id) do update set
 
 insert into site_settings (key, value) values
   ($q$contact_email$q$, $q$drap@drap.app.br$q$),
-  ($q$contact_whatsapp$q$, $q$+55 (00) 00000-0000$q$),
+  ($q$contact_whatsapp$q$, $q$+55 (62) 98266-3870$q$),
   ($q$contact_hours$q$, $q$Seg–Sex · 09h–18h$q$)
 on conflict (key) do nothing;
