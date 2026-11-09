@@ -148,7 +148,13 @@ img, svg { display: block; }
 .container { width: min(1920px, 100% - clamp(48px, 8vw, 192px)); margin-inline: auto; } /* fluido: ocupa a tela com margens proporcionais */
 .mono { font-family: var(--font-mono); letter-spacing: .02em; }
 .serif { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; }
-.grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.grad {
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  /* folga à direita em cada linha: com letter-spacing negativo, a última letra (ex.: o "b" de "sob")
+     passa da caixa do texto e o degradê, que só pinta dentro dela, cortava a ponta */
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  padding-right: .08em; margin-right: -.08em;
+}
 
 /* ---------- Fundo ---------- */
 .bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
