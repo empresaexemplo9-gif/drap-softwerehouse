@@ -131,5 +131,52 @@ window.DRAP_PLATFORMS = [
     },
     url: "#contato",
     repo: "empresaexemplo9-gif/drap-concord"
+  },
+  {
+    id: "empresa",
+    name: "DRAP Empresa",
+    code: "PLT-07",
+    category: "Gestão Financeira",
+    tagline: "Gestão financeira sem planilha.",
+    summary:
+      "Lançamentos, conciliação bancária por OFX, fluxo de caixa, DRE, nota fiscal e cobrança por boleto, PIX e cartão num lugar só, com IA que lê notas e comprovantes. Quatro planos por empresa, do MEI à EPP, com 14 dias de teste sem cartão.",
+    features: ["Conciliação OFX", "DRE & fluxo de caixa", "NF-e · NFS-e", "IA que lê comprovantes"],
+    stack: ["Next.js", "PostgreSQL", "API REST"],
+    status: "Disponível",
+    palette: ["#00BCFF", "#0E1420", "#FF5547", "#FAFAF0"],
+    logo: { svg: DRAP_D_FAZENDA },
+    url: "https://empresa.drap.app.br/?utm_source=hub"
+  },
+  {
+    id: "granja",
+    name: "DRAP Granja",
+    code: "PLT-08",
+    category: "Agronegócio",
+    tagline: "Sua granja produz. Mas quanto sobra?",
+    summary:
+      "Gestão para granjas de ovos: custo real de cada lote, coleta, postura, ração, estoque de ovos por tamanho, plantel, calendário sanitário e financeiro num lugar só. O app do galpão lança sem sinal e sincroniza sozinho, e a NF-e de ovo já vem inclusa.",
+    features: ["Custo por lote e por dúzia", "App do galpão offline", "Estoque de ovos", "NF-e de ovo"],
+    stack: ["Next.js", "PostgreSQL", "Android"],
+    status: "Disponível",
+    palette: ["#9A4F2B", "#B88836", "#251C14", "#F9F1E4"],
+    logo: {
+      svg: '<svg viewBox="20 12 60 76" fill="currentColor" aria-hidden="true"><path d="M50 15C66 15 77 39 77 59C77 75 65 85 50 85C35 85 23 75 23 59C23 39 34 15 50 15Z"/></svg>'
+    },
+    url: "https://granja.drap.app.br/?utm_source=hub"
+  },
+  {
+    id: "loja",
+    name: "DRAP Loja",
+    code: "PLT-09",
+    category: "Varejo & E-commerce",
+    tagline: "Sua loja online pronta pra vender, seja qual for o seu varejo.",
+    summary:
+      "Loja online com a sua marca para mercado, construção, elétrica, moda, autopeças e qualquer varejo: do pedido no WhatsApp à compra 100% online, com pagamento, frete e envio. Integração nativa com o ERP Micro-F, painel de admin e vendedor, e a DRAP monta junto com você.",
+    features: ["Pedido no WhatsApp", "Checkout 100% online", "Integração Micro-F", "Painel admin + vendedor"],
+    stack: ["Next.js", "Micro-F", "IA opcional"],
+    status: "Sob demanda",
+    palette: ["#7C3AED", "#0E1420", "#FF5547", "#FBFBF2"],
+    logo: { svg: DRAP_D_FAZENDA },
+    url: "https://loja.drap.app.br/?utm_source=hub"
   }
 ];
