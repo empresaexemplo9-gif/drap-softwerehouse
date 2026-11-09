@@ -40,7 +40,7 @@ p{font-size:24px;line-height:1.4;opacity:.85;margin:0;max-width:900px}
 <div class="chips">${chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div><div class="bar"></div>
 </body></html>`;
 
-const FONTS = { backoffice: "Cormorant Garamond", professor: "Playfair Display", fazenda: "Fraunces", pecuaria: "Fraunces", office: "Inter", concord: "Fraunces" };
+const FONTS = { backoffice: "Cormorant Garamond", professor: "Playfair Display", fazenda: "Fraunces", pecuaria: "Fraunces", office: "Inter", concord: "Fraunces", empresa: "Space Grotesk", granja: "Fraunces", loja: "Hanken Grotesk" };
 
 (async () => {
   const out = join(root, "public/assets/og");
