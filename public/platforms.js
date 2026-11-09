@@ -159,9 +159,7 @@ window.DRAP_PLATFORMS = [
     stack: ["Next.js", "PostgreSQL", "Android"],
     status: "Disponível",
     palette: ["#9A4F2B", "#B88836", "#251C14", "#F9F1E4"],
-    logo: {
-      svg: '<svg viewBox="20 12 60 76" fill="currentColor" aria-hidden="true"><path d="M50 15C66 15 77 39 77 59C77 75 65 85 50 85C35 85 23 75 23 59C23 39 34 15 50 15Z"/></svg>'
-    },
+    logo: { svg: DRAP_D_FAZENDA },
     url: "https://granja.drap.app.br/?utm_source=hub"
   },
   {

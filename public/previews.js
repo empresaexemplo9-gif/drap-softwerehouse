@@ -10,8 +10,7 @@
 
 /* Símbolos oficiais, com a geometria de cada repositório:
    Backoffice/Professor: public/brand/drap-symbol-*.svg (D com corte, 320×330)
-   Fazenda/Pecuária/Empresa/Loja: public/drap-fazenda.svg · Concord: brand/logo.svg
-   Granja: o ovo do favicon de granja.drap.app.br */
+   Fazenda/Pecuária/Empresa/Granja/Loja: public/drap-fazenda.svg · Concord: brand/logo.svg */
 const PV_MARK = {
   cut: (id) => `<svg class="pv-mark" viewBox="0 0 320 330" fill="currentColor" aria-hidden="true"><mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="330"><rect width="320" height="330" fill="#fff"/><path d="M236 -4L252 -4L103 334L97 334Z" fill="#000"/></mask><path d="M0 0H232C284 0 320 46 320 100V230C320 292 284 330 236 330H0Z" mask="url(#${id})"/></svg>`,
   fazenda: () => '<svg class="pv-mark" viewBox="20.3 5.98 57.2 56.9" fill="currentColor" aria-hidden="true"><path d="M65.41 6.62 39.43 62.87h22.18c8.6 0 15.53-9.61 15.53-21.55V27.53c0-10.12-4.97-18.57-11.73-20.91z"/><path d="M20.36 5.98c-.08 18.97-.05 37.93 0 56.9h18.79L62.76 6.04a11.6 11.6 0 0 0-1.15-.06z"/></svg>',
@@ -207,7 +206,7 @@ window.DRAP_PREVIEWS = {
   granja: () => `
   <div class="pv pv-gr">
     <header class="pv-gr__head">
-      <div class="pv-gr__brand"><svg class="pv-mark" viewBox="20 12 60 76" fill="currentColor" aria-hidden="true"><path d="M50 15C66 15 77 39 77 59C77 75 65 85 50 85C35 85 23 75 23 59C23 39 34 15 50 15Z"/></svg><b>DRAP</b><span>Granja</span></div>
+      <div class="pv-gr__brand">${PV_MARK.fazenda()}<b>DRAP</b><span>Granja</span></div>
       <nav><span class="on">Hoje</span><span>Coleta</span><span>Lotes</span><span>Estoque</span><span>Sanidade</span><span>Dinheiro</span><span>NF-e</span></nav>
       <em class="pv-gr__sync">● galpão · sincronizado</em>
     </header>

@@ -1103,7 +1103,7 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
 .pv-gr .num { font-family: "JetBrains Mono", var(--font-mono); }
 .pv-gr__head { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: #251C14; color: #B8A891; }
 .pv-gr__brand { display: flex; align-items: center; gap: 5px; color: #F9F1E4; font-family: "Fraunces", Georgia, serif; }
-.pv-gr__brand .pv-mark { width: 12px; height: 15px; color: #DDBE7E; }
+.pv-gr__brand .pv-mark { width: 14px; height: 14px; color: #F9F1E4; }
 .pv-gr__brand b { font-family: "Inter", var(--font-sans); font-size: 10px; letter-spacing: .14em; }
 .pv-gr__brand span { font-size: 13px; }
 .pv-gr__head nav { display: flex; gap: 3px; font-size: 8.5px; }
