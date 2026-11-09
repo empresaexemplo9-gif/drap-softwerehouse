@@ -31,42 +31,6 @@ const DRAP_D_FAZENDA =
 
 window.DRAP_PLATFORMS = [
   {
-    id: "backoffice",
-    name: "DRAP Backoffice",
-    code: "PLT-01",
-    category: "Arquitetura & Construção",
-    tagline: "O backoffice completo do escritório de arquitetura.",
-    summary:
-      "SaaS multiempresa para arquitetura, engenharia e obras: do lead à proposta aceita online, com orçamentos com BDI, diário de obra, financeiro por obra, portal do cliente e a Prancheta, que abre DWG, IFC e PDF no navegador.",
-    features: ["Orçamentos & propostas", "Diário de obra", "Prancheta DWG / IFC", "Portal do cliente"],
-    stack: ["Next.js", "TypeScript", "Recharts"],
-    status: "Disponível",
-    palette: ["#27557B", "#204362", "#0D151F", "#B0ADA8"],
-    logo: {
-      svg: '<svg viewBox="0 0 320 330" fill="currentColor" aria-hidden="true"><mask id="m-backoffice" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="330"><rect width="320" height="330" fill="#fff"/><path d="M236 -4L252 -4L103 334L97 334Z" fill="#000"/></mask><path d="M0 0H232C284 0 320 46 320 100V230C320 292 284 330 236 330H0Z" mask="url(#m-backoffice)"/></svg>'
-    },
-    url: "https://nexo-obra-jet.vercel.app",
-    repo: "empresaexemplo9-gif/Nexo-obra"
-  },
-  {
-    id: "professor",
-    name: "DRAP Professor",
-    code: "PLT-02",
-    category: "Educação & Capacitação",
-    tagline: "Seu campus digital, com a sua marca.",
-    summary:
-      "Plataforma EAD/LMS white-label e multi-segmento para vender e ministrar mentorias, cursos e capacitações. Inclui trilhas por nível e módulo, perfis de acesso, tema por cliente com contraste validado, 2FA e conformidade com a LGPD.",
-    features: ["White-label multi-tenant", "Trilhas & progresso", "Perfis & permissões", "2FA + LGPD"],
-    stack: ["Next.js 15", "PostgreSQL", "Prisma"],
-    status: "Disponível",
-    palette: ["#25465A", "#C9A86A", "#102A3C", "#FAF9F6"],
-    logo: {
-      svg: '<svg viewBox="0 0 320 330" fill="currentColor" aria-hidden="true"><mask id="m-professor" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="330"><rect width="320" height="330" fill="#fff"/><path d="M236 -4L252 -4L103 334L97 334Z" fill="#000"/></mask><path d="M0 0H232C284 0 320 46 320 100V230C320 292 284 330 236 330H0Z" mask="url(#m-professor)"/></svg>'
-    },
-    url: "https://drap-professor.vercel.app",
-    repo: "empresaexemplo9-gif/DRAP-professor"
-  },
-  {
     id: "fazenda",
     name: "DRAP Fazenda",
     code: "PLT-03",
@@ -83,6 +47,36 @@ window.DRAP_PLATFORMS = [
     repo: "psaprincesa-netizen/fazenda-app"
   },
   {
+    id: "empresa",
+    name: "DRAP Empresa",
+    code: "PLT-07",
+    category: "Gestão Financeira",
+    tagline: "Gestão financeira sem planilha.",
+    summary:
+      "Lançamentos, conciliação bancária por OFX, fluxo de caixa, DRE, nota fiscal e cobrança por boleto, PIX e cartão num lugar só, com IA que lê notas e comprovantes. Quatro planos por empresa, do MEI à EPP, com 14 dias de teste sem cartão.",
+    features: ["Conciliação OFX", "DRE & fluxo de caixa", "NF-e · NFS-e", "IA que lê comprovantes"],
+    stack: ["Next.js", "PostgreSQL", "API REST"],
+    status: "Disponível",
+    palette: ["#00BCFF", "#0E1420", "#FF5547", "#FAFAF0"],
+    logo: { svg: DRAP_D_FAZENDA },
+    url: "https://empresa.drap.app.br/?utm_source=hub"
+  },
+  {
+    id: "granja",
+    name: "DRAP Granja",
+    code: "PLT-08",
+    category: "Agronegócio",
+    tagline: "Sua granja produz. Mas quanto sobra?",
+    summary:
+      "Gestão para granjas de ovos: custo real de cada lote, coleta, postura, ração, estoque de ovos por tamanho, plantel, calendário sanitário e financeiro num lugar só. O app do galpão lança sem sinal e sincroniza sozinho, e a NF-e de ovo já vem inclusa.",
+    features: ["Custo por lote e por dúzia", "App do galpão offline", "Estoque de ovos", "NF-e de ovo"],
+    stack: ["Next.js", "PostgreSQL", "Android"],
+    status: "Disponível",
+    palette: ["#9A4F2B", "#B88836", "#251C14", "#F9F1E4"],
+    logo: { svg: DRAP_D_FAZENDA },
+    url: "https://granja.drap.app.br/?utm_source=hub"
+  },
+  {
     id: "pecuaria",
     name: "DRAP Pecuária",
     code: "PLT-04",
@@ -97,6 +91,39 @@ window.DRAP_PLATFORMS = [
     logo: { svg: DRAP_D_FAZENDA },
     url: "#contato",
     repo: "empresaexemplo9-gif/drap-fazenda-criacao"
+  },
+  {
+    id: "loja",
+    name: "DRAP Loja",
+    code: "PLT-09",
+    category: "Varejo & E-commerce",
+    tagline: "Sua loja online pronta pra vender, seja qual for o seu varejo.",
+    summary:
+      "Loja online com a sua marca para mercado, construção, elétrica, moda, autopeças e qualquer varejo: do pedido no WhatsApp à compra 100% online, com pagamento, frete e envio. Integração nativa com o ERP Micro-F, painel de admin e vendedor, e a DRAP monta junto com você.",
+    features: ["Pedido no WhatsApp", "Checkout 100% online", "Integração Micro-F", "Painel admin + vendedor"],
+    stack: ["Next.js", "Micro-F", "IA opcional"],
+    status: "Sob demanda",
+    palette: ["#7C3AED", "#0E1420", "#FF5547", "#FBFBF2"],
+    logo: { svg: DRAP_D_FAZENDA },
+    url: "https://loja.drap.app.br/?utm_source=hub"
+  },
+  {
+    id: "backoffice",
+    name: "DRAP Backoffice",
+    code: "PLT-01",
+    category: "Arquitetura & Construção",
+    tagline: "O backoffice completo do escritório de arquitetura.",
+    summary:
+      "SaaS multiempresa para arquitetura, engenharia e obras: do lead à proposta aceita online, com orçamentos com BDI, diário de obra, financeiro por obra, portal do cliente e a Prancheta, que abre DWG, IFC e PDF no navegador.",
+    features: ["Orçamentos & propostas", "Diário de obra", "Prancheta DWG / IFC", "Portal do cliente"],
+    stack: ["Next.js", "TypeScript", "Recharts"],
+    status: "Disponível",
+    palette: ["#27557B", "#204362", "#0D151F", "#B0ADA8"],
+    logo: {
+      svg: '<svg viewBox="0 0 320 330" fill="currentColor" aria-hidden="true"><mask id="m-backoffice" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="330"><rect width="320" height="330" fill="#fff"/><path d="M236 -4L252 -4L103 334L97 334Z" fill="#000"/></mask><path d="M0 0H232C284 0 320 46 320 100V230C320 292 284 330 236 330H0Z" mask="url(#m-backoffice)"/></svg>'
+    },
+    url: "https://nexo-obra-jet.vercel.app",
+    repo: "empresaexemplo9-gif/Nexo-obra"
   },
   {
     id: "office",
@@ -133,48 +160,21 @@ window.DRAP_PLATFORMS = [
     repo: "empresaexemplo9-gif/drap-concord"
   },
   {
-    id: "empresa",
-    name: "DRAP Empresa",
-    code: "PLT-07",
-    category: "Gestão Financeira",
-    tagline: "Gestão financeira sem planilha.",
+    id: "professor",
+    name: "DRAP Professor",
+    code: "PLT-02",
+    category: "Educação & Capacitação",
+    tagline: "Seu campus digital, com a sua marca.",
     summary:
-      "Lançamentos, conciliação bancária por OFX, fluxo de caixa, DRE, nota fiscal e cobrança por boleto, PIX e cartão num lugar só, com IA que lê notas e comprovantes. Quatro planos por empresa, do MEI à EPP, com 14 dias de teste sem cartão.",
-    features: ["Conciliação OFX", "DRE & fluxo de caixa", "NF-e · NFS-e", "IA que lê comprovantes"],
-    stack: ["Next.js", "PostgreSQL", "API REST"],
+      "Plataforma EAD/LMS white-label e multi-segmento para vender e ministrar mentorias, cursos e capacitações. Inclui trilhas por nível e módulo, perfis de acesso, tema por cliente com contraste validado, 2FA e conformidade com a LGPD.",
+    features: ["White-label multi-tenant", "Trilhas & progresso", "Perfis & permissões", "2FA + LGPD"],
+    stack: ["Next.js 15", "PostgreSQL", "Prisma"],
     status: "Disponível",
-    palette: ["#00BCFF", "#0E1420", "#FF5547", "#FAFAF0"],
-    logo: { svg: DRAP_D_FAZENDA },
-    url: "https://empresa.drap.app.br/?utm_source=hub"
-  },
-  {
-    id: "granja",
-    name: "DRAP Granja",
-    code: "PLT-08",
-    category: "Agronegócio",
-    tagline: "Sua granja produz. Mas quanto sobra?",
-    summary:
-      "Gestão para granjas de ovos: custo real de cada lote, coleta, postura, ração, estoque de ovos por tamanho, plantel, calendário sanitário e financeiro num lugar só. O app do galpão lança sem sinal e sincroniza sozinho, e a NF-e de ovo já vem inclusa.",
-    features: ["Custo por lote e por dúzia", "App do galpão offline", "Estoque de ovos", "NF-e de ovo"],
-    stack: ["Next.js", "PostgreSQL", "Android"],
-    status: "Disponível",
-    palette: ["#9A4F2B", "#B88836", "#251C14", "#F9F1E4"],
-    logo: { svg: DRAP_D_FAZENDA },
-    url: "https://granja.drap.app.br/?utm_source=hub"
-  },
-  {
-    id: "loja",
-    name: "DRAP Loja",
-    code: "PLT-09",
-    category: "Varejo & E-commerce",
-    tagline: "Sua loja online pronta pra vender, seja qual for o seu varejo.",
-    summary:
-      "Loja online com a sua marca para mercado, construção, elétrica, moda, autopeças e qualquer varejo: do pedido no WhatsApp à compra 100% online, com pagamento, frete e envio. Integração nativa com o ERP Micro-F, painel de admin e vendedor, e a DRAP monta junto com você.",
-    features: ["Pedido no WhatsApp", "Checkout 100% online", "Integração Micro-F", "Painel admin + vendedor"],
-    stack: ["Next.js", "Micro-F", "IA opcional"],
-    status: "Sob demanda",
-    palette: ["#7C3AED", "#0E1420", "#FF5547", "#FBFBF2"],
-    logo: { svg: DRAP_D_FAZENDA },
-    url: "https://loja.drap.app.br/?utm_source=hub"
+    palette: ["#25465A", "#C9A86A", "#102A3C", "#FAF9F6"],
+    logo: {
+      svg: '<svg viewBox="0 0 320 330" fill="currentColor" aria-hidden="true"><mask id="m-professor" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="330"><rect width="320" height="330" fill="#fff"/><path d="M236 -4L252 -4L103 334L97 334Z" fill="#000"/></mask><path d="M0 0H232C284 0 320 46 320 100V230C320 292 284 330 236 330H0Z" mask="url(#m-professor)"/></svg>'
+    },
+    url: "https://drap-professor.vercel.app",
+    repo: "empresaexemplo9-gif/DRAP-professor"
   }
 ];
