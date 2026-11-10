@@ -529,6 +529,21 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
 .card__link i { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 6px; font-style: normal; background: var(--c); color: #06070a; transition: transform .35s var(--ease); }
 .card__link:hover { background: rgba(var(--c-rgb), .16); box-shadow: 0 0 24px -6px rgba(var(--c-rgb), .8); }
 .card__link:hover i { transform: rotate(-45deg); }
+.card__foot { flex-wrap: wrap; }
+.card__actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.card__live {
+  flex: none; display: inline-flex; align-items: center; gap: 7px;
+  height: 36px; padding: 0 12px; border-radius: 8px;
+  font-size: 12.5px; font-weight: 500; color: var(--text);
+  border: 1px solid var(--line-strong); background: var(--glass-bg-soft);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  transition: all .35s var(--ease);
+}
+.card__live b { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px rgba(34,160,107,.18); }
+.card__live i { font-style: normal; font-size: 12px; color: var(--text-dim); transition: transform .35s var(--ease); }
+.card__live:hover { border-color: rgba(var(--c-rgb), .5); background: rgba(var(--c-rgb), .08); }
+.card__live:hover i { transform: translate(2px, -2px); color: var(--text); }
+.card__live:focus-visible, .card__link:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
 
 /* ---------- Serviços ---------- */
 .services { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
@@ -1276,7 +1291,7 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
 .card[data-href] { cursor: pointer; }
 .card__name a { color: inherit; }
 .card__name a::after { content: ""; position: absolute; inset: 0; z-index: 0; } /* área clicável do card inteiro */
-.card .swatch, .card .card__link, .card .palette { position: relative; z-index: 1; }
+.card .swatch, .card .card__link, .card .card__live, .card .palette { position: relative; z-index: 1; }
 
 @media (max-width: 1100px) {
   .pd-modules { grid-template-columns: repeat(2, 1fr); }

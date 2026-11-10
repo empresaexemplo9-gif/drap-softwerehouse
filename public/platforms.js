@@ -43,7 +43,7 @@ window.DRAP_PLATFORMS = [
     status: "Disponível",
     palette: ["#486B3A", "#7A5C3B", "#111410", "#F7F4EC"],
     logo: { svg: DRAP_D_FAZENDA },
-    url: "#contato",
+    url: "https://fazenda.drap.app.br/?utm_source=hub",
     repo: "psaprincesa-netizen/fazenda-app"
   },
   {
@@ -89,7 +89,7 @@ window.DRAP_PLATFORMS = [
     status: "Disponível",
     palette: ["#7A5C3B", "#486B3A", "#111410", "#FBFAF5"],
     logo: { svg: DRAP_D_FAZENDA },
-    url: "#contato",
+    url: "https://drap-pecuaria.vercel.app/?utm_source=hub",
     repo: "empresaexemplo9-gif/drap-fazenda-criacao"
   },
   {
@@ -156,7 +156,7 @@ window.DRAP_PLATFORMS = [
     logo: {
       svg: '<svg viewBox="0 0 778 781" fill="currentColor" aria-hidden="true"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg>'
     },
-    url: "#contato",
+    url: "https://drap-concord.vercel.app/?utm_source=hub",
     repo: "empresaexemplo9-gif/drap-concord"
   },
   {

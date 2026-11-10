@@ -125,7 +125,10 @@ ${renderPreview(p)}
 
         <div class="card__foot">
           <div class="stack">${p.stack.map((s) => `<span>${esc(s)}</span>`).join("")}</div>
-          <a class="card__link" href="/plataformas/${esc(p.id)}" aria-label="Conhecer a plataforma ${esc(p.name)}">Conhecer <i>→</i></a>
+          <div class="card__actions">
+            ${isExternal(p.url) ? `<a class="card__live" href="${esc(p.url)}" target="_blank" rel="noopener" aria-label="Ver a plataforma ${esc(p.name)} ao vivo (abre em nova aba)"><b aria-hidden="true"></b>Ao vivo <i aria-hidden="true">↗</i></a>` : ""}
+            <a class="card__link" href="/plataformas/${esc(p.id)}" aria-label="Conhecer a plataforma ${esc(p.name)}">Conhecer <i>→</i></a>
+          </div>
         </div>
       </article>`;
     })
