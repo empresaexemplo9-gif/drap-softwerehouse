@@ -29,6 +29,15 @@
   const STATUS = { novo: "Novo", em_contato: "Em contato", proposta: "Proposta", ganho: "Ganho", perdido: "Perdido" };
   const fmtDate = (iso) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
   const digits = (s) => String(s || "").replace(/\D/g, "");
+  // E-mail de contato da DRAP (Configurações) e resposta pronta ao cliente, com a mensagem dele citada
+  let contactEmail = "drap@drap.app.br";
+  const CONTACT = () => contactEmail;
+  const replyLink = (l) => {
+    const first = String(l.name || "").split(" ")[0];
+    const quote = l.message ? `\n\n\n--- Mensagem enviada pelo site em ${fmtDate(l.created_at)} ---\n${l.message}` : "";
+    const body = `Olá, ${first}!\n\nObrigado pelo contato com a DRAP.${quote}`;
+    return `mailto:${encodeURIComponent(l.email)}?subject=${encodeURIComponent("Re: seu contato com a DRAP")}&body=${encodeURIComponent(body)}`;
+  };
 
   let leads = [], platforms = [];
 
@@ -42,9 +51,19 @@
     }
     $("#user-email").textContent = me.email;
     show("view-app");
+    // Aviso de ambiente: banco ausente ou inacessível
+    const warn = $("#env-warn");
+    if (me.db && !me.db.ok) {
+      warn.hidden = false;
+      warn.innerHTML = `<b>Banco de dados com problema neste ambiente (${esc(me.env)}).</b> ${esc(me.db.problem)}
+        Na Vercel: Storage → Neon → Connect Project, marcando <b>Production</b> e <b>Preview</b>; depois Deployments → Redeploy.`;
+    } else warn.hidden = true;
     await loadPlatforms();
     await Promise.all([loadLeads(), loadSettings()]);
+    document.dispatchEvent(new CustomEvent("drap:admin-ready"));
   }
+  // Compartilhado com /admin/proposals.js
+  window.DRAP_ADMIN = { call, toast, esc, fmtDate, reloadLeads: () => loadLeads(), platforms: () => platforms };
 
   $("#login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -89,11 +108,14 @@
     $("#lead-table").innerHTML = `
       <thead><tr><th>Recebido</th><th>Contato</th><th>Interesse</th><th>Mensagem</th><th>Status</th><th>Notas internas</th></tr></thead>
       <tbody>${rows.length ? rows.map((l) => `
-        <tr data-id="${l.id}">
+        <tr data-id="${l.id}" data-platform="${esc(l.platform_id || "")}">
           <td class="mono adm-nowrap">${fmtDate(l.created_at)}</td>
           <td><b>${esc(l.name)}</b>${l.company ? `<small>${esc(l.company)}</small>` : ""}
             <a href="mailto:${esc(l.email)}">${esc(l.email)}</a>
-            ${l.phone ? `<a href="https://wa.me/${digits(l.phone)}" target="_blank" rel="noopener">WhatsApp ${esc(l.phone)}</a>` : ""}</td>
+            <a class="adm-reply" href="${replyLink(l)}">✉ Responder por e-mail</a>
+            ${l.forwarded_at ? `<small class="adm-fw ok">chegou em ${esc(CONTACT())} (${esc(l.forwarded_via)})</small>` : l.forward_error ? `<small class="adm-fw err" title="${esc(l.forward_error)}">não chegou no e-mail: responda por aqui</small>` : ""}
+            ${l.phone ? `<a href="https://wa.me/${digits(l.phone)}" target="_blank" rel="noopener">WhatsApp ${esc(l.phone)}</a>` : ""}
+            <button type="button" class="adm-mini" data-new-proposal>+ Proposta</button></td>
           <td>${esc(platformName(l.platform_id) || l.interest || "—")}<small class="mono">${esc(l.source || "")}</small></td>
           <td class="adm-msg">${esc(l.message || "—")}</td>
           <td><select class="adm-status adm-status--${l.status}" data-field="status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${k === l.status ? " selected" : ""}>${v}</option>`).join("")}</select></td>
@@ -152,7 +174,10 @@
           <label>Link (URL ou #contato)<input name="url" value="${esc(p.url)}" maxlength="300" /></label>
           <label>Ordem<input name="sort_order" type="number" value="${p.sort_order}" step="10" /></label>
           <label class="adm-check"><input type="checkbox" name="active"${p.active ? " checked" : ""} /> Publicada no site</label>
-          <div class="w2 adm-pactions"><button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar alterações</span><span class="btn__icon" aria-hidden="true">✓</span></button></div>
+          <div class="w2 adm-pactions">
+            <a class="btn btn--ghost btn--sm" href="/proposta/modelo/${esc(p.id)}" target="_blank" rel="noopener"><span class="btn__label">Ver proposta modelo</span><span class="btn__kbd mono">↗</span></a>
+            <button class="btn btn--ghost btn--sm" type="button" data-platform-proposal="${esc(p.id)}"><span class="btn__label">Gerar proposta para cliente</span></button>
+            <button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar alterações</span><span class="btn__icon" aria-hidden="true">✓</span></button></div>
         </form>
       </details>`).join("");
   }
@@ -178,18 +203,30 @@
     ["contact_email", "E-mail de contato"],
     ["contact_whatsapp", "WhatsApp"],
     ["contact_hours", "Horário de atendimento"],
+    ["meeting_days", "Agenda · dias da semana (0 = dom … 6 = sáb, separados por vírgula)"],
+    ["meeting_start", "Agenda · início (HH:MM)"],
+    ["meeting_end", "Agenda · fim (HH:MM)"],
+    ["meeting_lunch", "Agenda · intervalo sem reuniões (HH:MM-HH:MM, vazio para nenhum)"],
+    ["meeting_duration", "Agenda · duração da reunião (minutos)"],
+    ["meeting_notice_hours", "Agenda · antecedência mínima (horas)"],
+    ["meeting_horizon_days", "Agenda · até quantos dias à frente"],
+    ["meeting_address", "Agenda · endereço para reuniões presenciais"],
   ];
+  const AUTO = "proposal_auto_send";
   async function loadSettings() {
     let map;
-    try { map = await call("GET", "settings"); }
+    try { map = await call("GET", "settings"); if (map.contact_email) contactEmail = map.contact_email; }
     catch (err) { return toast("Erro ao carregar configurações: " + err.message); }
     $("#settings-form").innerHTML = SETTINGS.map(([k, label]) => `
       <div class="field"><label class="mono" for="s-${k}">${label}</label><input id="s-${k}" name="${k}" value="${esc(map[k] || "")}" maxlength="500" /></div>`).join("") +
+      `<label class="adm-check adm-check--block"><input type="checkbox" name="${AUTO}"${map[AUTO] !== "nao" ? " checked" : ""} />
+        <span><b>Enviar propostas simples automaticamente</b><small>Questionários classificados como simples recebem a proposta na hora. Médios e complexos sempre aguardam a análise da equipe.</small></span></label>` +
       `<button class="btn btn--primary btn--sm" type="submit"><span class="btn__label">Salvar</span><span class="btn__icon" aria-hidden="true">✓</span></button>`;
   }
   $("#settings-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const body = Object.fromEntries(SETTINGS.map(([k]) => [k, e.target.elements[k].value.trim()]).filter(([, v]) => v));
+    const body = Object.fromEntries(SETTINGS.map(([k]) => [k, e.target.elements[k].value.trim()]).filter(([k, v]) => v || k === "meeting_lunch"));
+    body[AUTO] = e.target.elements[AUTO].checked ? "sim" : "nao";
     try { await call("PUT", "settings", body); toast("Configurações salvas"); }
     catch (err) { toast("Erro: " + err.message); }
   });

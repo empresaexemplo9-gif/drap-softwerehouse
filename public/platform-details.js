@@ -304,6 +304,154 @@ window.DRAP_DETAILS = {
     ],
     cta: "Organize seus atendimentos com o DRAP Concord",
   },
+
+  empresa: {
+    headline: "O financeiro da empresa num lugar só, sem montar planilha.",
+    lead:
+      "O DRAP Empresa reúne lançamentos, conciliação do banco, fluxo de caixa, DRE, nota fiscal e cobrança numa única plataforma, com uma IA que categoriza lançamentos e lê notas e comprovantes. São quatro planos por CNPJ, do MEI à EPP, com tudo do plano já ligado: você cria a conta em cinco minutos e testa o plano Completo por 14 dias, sem cartão.",
+    audience: ["MEI e autônomos", "Microempresas que emitem nota", "EPP com equipe e contador", "Empresas sem financeiro dedicado"],
+    pains: [
+      "Financeiro controlado em caderno ou planilha, que só mostra o resultado depois que o dinheiro já saiu.",
+      "Extrato do banco conferido à mão, linha por linha, contra os lançamentos.",
+      "Nota fiscal num sistema, boleto em outro e o fechamento do mês montado na véspera de mandar pro contador.",
+      "Ninguém sabe ao certo o que vence na semana nem quem ainda está devendo.",
+    ],
+    outcomes: [
+      { title: "Caixa visível de verdade", text: "Fluxo de caixa com projeção de saldo, contas a pagar e a receber e orçamento, num dashboard ao vivo com comparação entre meses." },
+      { title: "Banco conciliado sem esforço", text: "Importe o extrato OFX e a DRAP casa as linhas com os seus lançamentos. Você só confere o que ficou pendente." },
+      { title: "Fatura, cobra e recebe", text: "NFS-e de serviço e NF-e de produto emitidas direto da plataforma, com cobrança por boleto, PIX e cartão para os seus clientes." },
+      { title: "Fechamento pronto pro contador", text: "DRE, balanço e o pacote de fechamento saem da plataforma, e o contador entra como usuário com o papel certo." },
+    ],
+    modules: [
+      { title: "Lançamentos e plano de contas", text: "Entradas e saídas com categoria, contas a pagar e a receber. O plano de contas sai pronto em segundos, com IA, modelo ou à mão." },
+      { title: "Banco & Conciliação", text: "Extrato OFX conciliado com os seus lançamentos." },
+      { title: "Fluxo de Caixa & Tesouraria", text: "Projeção de saldo, contas a pagar e a receber e orçamento." },
+      { title: "Dashboards Pro", text: "Comparação entre meses, drill-down e KPIs do negócio." },
+      { title: "Emissão de Nota Fiscal", text: "NFS-e de serviço e NF-e de produto, direto da DRAP." },
+      { title: "Cobranças", text: "Boleto, PIX e cartão para os seus clientes, com página de pagamento hospedada." },
+      { title: "Contabilidade Básica", text: "DRE, balanço e o pacote de fechamento para o contador." },
+      { title: "IA e WhatsApp", text: "IA que categoriza lançamentos e lê comprovantes, e consulta pelo WhatsApp (“quanto tem em caixa?”) sem abrir o sistema." },
+      { title: "Integrações", text: "Google Sheets, API REST e webhooks assinados para ligar a DRAP aos seus outros sistemas." },
+    ],
+    steps: [
+      { title: "Cria a conta da empresa", text: "E-mail e senha, sem cartão. São 14 dias com o plano Completo liberado." },
+      { title: "Monta o plano de contas", text: "Com a IA, com modelos prontos ou manualmente. Receitas, despesas e impostos, editáveis a qualquer momento." },
+      { title: "Lança e acompanha", text: "Registre entradas e saídas, importe o extrato e acompanhe tudo no dashboard. No fim do teste, escolha o plano." },
+      { title: "Retaguarda, se precisar", text: "No plano Retaguarda, a DRAP implanta junto com você em até 15 dias e manda o mês fechado no seu e-mail." },
+    ],
+    differentials: [
+      "Preço por CNPJ, com tudo do plano ligado: Base, Gestão, Completo e Retaguarda, sem módulo escondido.",
+      "Exportação completa da base a qualquer momento, em CSV ou JSON, no mesmo formato que a importação aceita.",
+      "API pública com chave por empresa, escopos por recurso e webhooks assinados.",
+      "Plano Retaguarda com gente da DRAP: implantação em até 15 dias e resposta em até 1 dia útil, medida no chamado.",
+    ],
+    security: ["Isolamento por empresa com Row Level Security no banco", "Cartão processado fora da DRAP, em ambiente PCI-DSS", "2FA por app autenticador e auditoria de cada ação", "Backup diário e conformidade com a LGPD, com DPO"],
+    faq: [
+      { q: "Preciso de cartão para testar?", a: "Não. São 14 dias com o plano Completo inteiro liberado, sem cartão. No fim do teste você escolhe o plano." },
+      { q: "Quanto custa?", a: "Há quatro planos por empresa, do MEI à EPP, com opção mensal ou anual (o anual sai com 2 meses de graça). Na demonstração indicamos o plano certo para o seu porte." },
+      { q: "Meu contador consegue acessar?", a: "Sim. A partir do plano Gestão a plataforma é multiusuário, com papel por empresa para a equipe e para o contador." },
+      { q: "E se eu quiser sair?", a: "Você exporta a base inteira quando quiser, em CSV ou JSON, sem pedir a ninguém. Cancela com 1 clique e mantém o acesso até o fim do ciclo." },
+    ],
+    cta: "Veja o financeiro da sua empresa no DRAP Empresa",
+  },
+
+  granja: {
+    headline: "Sua granja produz. Agora você vê quanto sobra.",
+    lead:
+      "O DRAP Granja é a gestão feita para granjas de ovos: mostra o custo real de cada lote e da dúzia, controla coleta, postura, ração, estoque de ovos, plantel e sanidade, e cuida do dinheiro no mesmo lugar. O operador lança pelo app do galpão, mesmo sem sinal, e tudo sincroniza sozinho quando a rede volta.",
+    audience: ["Granjas de ovos de postura", "Produtores familiares", "Granjas com equipe no galpão", "Quem vende para mercado, distribuidor ou merenda"],
+    pains: [
+      "A ração é o maior custo, e quando a saca sobe a margem some sem aviso.",
+      "Ninguém sabe quanto custou a dúzia que saiu de cada lote no mês passado.",
+      "O caderninho não diz quantas aves estão vivas agora, só no papel.",
+      "Galpão sem sinal: a coleta é anotada em papel e digitada depois, quando é digitada.",
+    ],
+    outcomes: [
+      { title: "Custo por lote e por dúzia", text: "Cada coleta, compra de ração e despesa entra no custo do lote, e o custo da dúzia aparece sem conta de cabeça." },
+      { title: "Lança no galpão, sem sinal", text: "App Android que funciona offline e sincroniza sozinho. Reenvio não duplica coleta, e o celular do galpão entra com código, não com a senha do dono." },
+      { title: "Plantel e sanidade em dia", text: "Lotes com idade, aves vivas e mortalidade acumulada, taxa de postura sobre as aves vivas e calendário de vacina que avisa o que atrasou." },
+      { title: "Dinheiro e nota juntos", text: "Entradas e saídas, conciliação do extrato, DRE e conta de sócios. Quando o cliente pedir nota, a NF-e de ovo já está ali, no mesmo preço." },
+    ],
+    modules: [
+      { title: "Coleta do dia", text: "Ovos por lote, com ou sem classificação por tamanho, quebrados e mortalidade." },
+      { title: "Estoque de ovos", text: "Saldo por tamanho e extrato do que entrou e saiu." },
+      { title: "Lotes e plantel", text: "Idade do lote, aves vivas, mortalidade acumulada e taxa de postura." },
+      { title: "Calendário sanitário", text: "Vacinas e medicamentos agendados pelo protocolo, com alerta do que está atrasado." },
+      { title: "App do galpão", text: "Android, offline, com acesso por código de 6 dígitos e revogação do aparelho num clique." },
+      { title: "Financeiro", text: "Entradas e saídas com categoria, centro de custo e comprovante; clientes, fornecedores, contas bancárias e conciliação." },
+      { title: "Vender com nota", text: "NF-e de venda de ovo, NFS-e, boleto e PIX, e cálculo do imposto do Simples." },
+      { title: "Consulta pelo WhatsApp", text: "Pergunte “quanto tem em caixa?” ou “quem ainda me deve?” e receba a resposta na hora." },
+    ],
+    steps: [
+      { title: "Cria a conta da granja", text: "E-mail e senha, sem cartão. São 30 dias com tudo liberado." },
+      { title: "Cadastra o lote", text: "Código, data de entrada e número de aves. Com protocolo de vacina, o calendário sanitário já entra agendado." },
+      { title: "Lança a coleta do dia", text: "O estoque se atualiza na hora, a taxa de postura sai calculada e o custo por dúzia começa a aparecer." },
+      { title: "Liga o galpão", text: "Gere o código do app do galpão para a equipe lançar de pé, sem internet." },
+    ],
+    differentials: [
+      "Feito só para granja de ovos: lote, postura, ração e dúzia no vocabulário da sua operação.",
+      "Plano grátis sem prazo, e um plano pago com tudo incluso, sem cobrar por usuário.",
+      "Nota fiscal opcional: dá para usar só para produção e dinheiro, e emitir quando o cliente pedir.",
+      "Exportação completa em planilha a qualquer momento, e pacote de fechamento em XLSX para o contador.",
+    ],
+    security: ["Isolamento por granja com Row Level Security no banco", "Cartão processado fora da DRAP, em ambiente PCI-DSS", "2FA por app autenticador e auditoria de cada ação", "LGPD por padrão, com DPO dedicado"],
+    faq: [
+      { q: "Funciona sem internet no galpão?", a: "Sim. O app do galpão para Android guarda os lançamentos no aparelho e sincroniza sozinho quando a rede volta, sem duplicar coleta." },
+      { q: "Tem plano grátis?", a: "Sim. Grátis para sempre, com até 60 lançamentos por mês e 2 lotes ativos. O plano pago libera tudo, para toda a equipe, num preço só." },
+      { q: "Preciso emitir nota fiscal?", a: "Não. Muita gente usa só para produção e dinheiro. Quando o mercado, o distribuidor ou a merenda pedir nota, a emissão já está pronta." },
+      { q: "O celular do galpão vê o financeiro?", a: "O operador entra por um código de 6 dígitos gerado por você, sem a senha do dono. Se o aparelho sumir, você revoga o acesso com um clique." },
+    ],
+    cta: "Descubra o custo real da sua dúzia com o DRAP Granja",
+  },
+
+  loja: {
+    headline: "A sua loja online no ar em dias, com a sua marca e o seu estoque.",
+    lead:
+      "A DRAP Loja é uma base de e-commerce pronta para qualquer varejo, como mercado, material de construção, elétrica, moda, autopeças, farmácia ou pet, que a DRAP ajusta para o seu negócio. Vai do pedido fechado no WhatsApp à compra 100% online, com pagamento, frete e envio, e integra o estoque com o ERP Micro-F. Não é autoatendimento: a gente monta junto com você.",
+    audience: ["Mercados e distribuidoras", "Material de construção e elétrica", "Moda e autopeças", "Farmácia, pet, papelaria e outros varejos"],
+    pains: [
+      "Catálogo e estoque digitados duas vezes, na loja virtual e no sistema da loja física.",
+      "Pedidos espalhados no WhatsApp, sem carrinho, sem histórico e sem saber quem atendeu.",
+      "Templates genéricos que você precisa configurar sozinho e que não têm a cara da sua marca.",
+      "Projetos de e-commerce que levam meses para sair do papel.",
+    ],
+    outcomes: [
+      { title: "Estoque que bate com o sistema", text: "Catálogo e estoque sincronizados com o Micro-F: o que aparece na loja é o que existe no seu ERP, sem digitar duas vezes." },
+      { title: "Checkout do seu jeito", text: "Carrinho que fecha pelo WhatsApp, simples e sem gateway, ou compra 100% online com pagamento, cálculo de frete e envio." },
+      { title: "Catálogo no ar rápido", text: "Produtos sobem em lote a partir do ERP, de uma planilha ou de fotos. Em moda e variações, a IA identifica de qual item é cada foto." },
+      { title: "Equipe organizada", text: "Painel de administração com produtos, pedidos, categorias e usuários, e cada vendedor com o seu acesso e o seu histórico." },
+    ],
+    modules: [
+      { title: "Loja com a sua marca", text: "Cores, logo, domínio e conteúdo próprios. A base é a mesma, a identidade é sua." },
+      { title: "Catálogo", text: "Montado a partir do seu ERP, de uma planilha ou das fotos dos produtos." },
+      { title: "Carrinho e checkout", text: "Pedido pelo WhatsApp ou compra 100% online." },
+      { title: "Pagamento, frete e envio", text: "Pagamento online e cálculo de frete, quando fizer sentido para o seu negócio." },
+      { title: "Painel admin + vendedor", text: "Produtos, pedidos, categorias, usuários e log da equipe." },
+      { title: "Integração Micro-F", text: "Estoque e catálogo sincronizados com o ERP quando você o usa." },
+      { title: "Cadastro com IA (opcional)", text: "Envio de produtos em lote, com a IA associando fotos aos itens." },
+      { title: "Hospedagem e domínio", text: "A DRAP cuida do servidor; o domínio pode ser novo ou o que você já tem." },
+    ],
+    steps: [
+      { title: "Você fala com a gente", text: "Conta o seu ramo e como a loja funciona hoje, para entendermos o que o seu varejo precisa." },
+      { title: "Montamos com você", text: "Configuramos a sua marca, subimos o catálogo e integramos ao Micro-F, se você usa." },
+      { title: "Loja no ar", text: "Você recebe os pedidos e gerencia tudo pelo painel, com treinamento e suporte no go-live." },
+      { title: "Ajustes contínuos", text: "A DRAP continua junto para ajustar a loja conforme as vendas." },
+    ],
+    differentials: [
+      "Não é um tema para você configurar sozinho: é uma loja no ar de verdade, montada pela DRAP.",
+      "Já tem loja rodando com essa base: a Jes, loja de moda em Silvânia (GO), vende com catálogo, carrinho no WhatsApp e painel próprio.",
+      "Integração nativa com o ERP Micro-F, sem que ela seja pré-requisito.",
+      "Orçamento sob medida pelo tamanho do catálogo e pelas integrações, sem pegadinha.",
+    ],
+    security: ["Hospedagem e domínio sob responsabilidade da DRAP", "Acessos separados por vendedor, com log da equipe", "Software construído e operado pela própria DRAP"],
+    faq: [
+      { q: "Preciso ter o Micro-F?", a: "Não. Se você usa, integramos e o estoque sincroniza sozinho. Se não usa, a loja funciona do mesmo jeito." },
+      { q: "É só pedido no WhatsApp ou dá para vender 100% online?", a: "Os dois. Dá para fechar pelo WhatsApp, sem gateway, ou ter checkout completo com pagamento online, frete e envio." },
+      { q: "Quanto custa? Tem mensalidade?", a: "O investimento depende do tamanho do catálogo e das integrações. Montamos um orçamento sob medida na conversa." },
+      { q: "Vocês migram o meu catálogo?", a: "Sim. Na montagem subimos os seus produtos a partir do ERP, de uma planilha ou das fotos." },
+    ],
+    cta: "Coloque a sua loja no ar com a DRAP Loja",
+  },
 };
 
 /* Seção institucional exibida em todas as páginas de plataforma */

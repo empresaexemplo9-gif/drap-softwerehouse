@@ -2,14 +2,16 @@
 // aplica as migrações do banco. As funções em /api são publicadas pela Vercel à parte.
 import { cpSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { migrate } from "./migrate.mjs";
+import { migrate } from "../lib/migrate.js";
 import { getPool, databaseUrl } from "../lib/db.js";
+import { seo } from "./seo.mjs";
 
 const root = new URL("..", import.meta.url).pathname;
 const dist = join(root, "dist");
 rmSync(dist, { recursive: true, force: true });
 cpSync(join(root, "public"), dist, { recursive: true });
 console.log("build: dist/ gerado");
+seo(root, dist);
 
 if (databaseUrl()) {
   await migrate();
