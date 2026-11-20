@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Seu depoimento · DRAP SoftwareHouse &amp; Business</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="/theme-init.js"></script>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/portfolio.css" />
+</head>
+<body class="dp-page" data-no-whatsapp>
+  <div class="bg" aria-hidden="true"><div class="bg-grid"></div><div class="bg-glow bg-glow--a"></div><div class="bg-glow bg-glow--b"></div></div>
+  <main class="container dp">
+    <a href="/" class="brand" aria-label="DRAP SoftwareHouse & Business">
+      <span class="brand__mark"><svg viewBox="0 0 778 781" fill="currentColor" aria-hidden="true"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg></span>
+      <span class="brand__text"><strong>DRAP</strong><small>SoftwareHouse<em>&amp;</em>Business</small></span>
+    </a>
+    <form class="dp-card" id="dp-form" novalidate>
+      <p class="section__index mono"><span>★</span> / Seu depoimento</p>
+      <h1 class="section__title" id="dp-title">Como está sendo a experiência com a <span class="serif">DRAP?</span></h1>
+      <p class="section__lead">Leva 1 minuto. Sua opinião ajuda outras empresas a decidir e ajuda a gente a melhorar. Publicamos só com a sua autorização.</p>
+      <fieldset class="dp-stars" aria-label="Nota de 1 a 5">
+        <legend class="mono">sua nota</legend>
+        <div id="dp-stars"></div>
+      </fieldset>
+      <div class="field"><label class="mono" for="dp-quote">em poucas palavras *</label>
+        <textarea id="dp-quote" name="quote" rows="5" maxlength="1200" required placeholder="O que mudou na sua operação? O que você diria para alguém que está avaliando a DRAP?"></textarea></div>
+      <div class="form__row">
+        <div class="field"><label class="mono" for="dp-name">nome *</label><input id="dp-name" name="name" maxlength="120" required /></div>
+        <div class="field"><label class="mono" for="dp-role">cargo</label><input id="dp-role" name="role" maxlength="120" placeholder="Ex.: Sócio-diretor" /></div>
+      </div>
+      <div class="field"><label class="mono" for="dp-company">empresa</label><input id="dp-company" name="company" maxlength="120" /></div>
+      <label class="dp-consent"><input type="checkbox" id="dp-consent" /> <span>Autorizo a DRAP a publicar este depoimento com meu nome, cargo e empresa no site e em materiais de divulgação.</span></label>
+      <button type="submit" class="btn btn--primary"><span class="btn__label">Enviar depoimento</span><span class="btn__icon" aria-hidden="true">→</span></button>
+      <p class="form__status mono" id="dp-status" role="status"></p>
+    </form>
+  </main>
+  <script src="/depoimento.js"></script>
+</body>
+</html>

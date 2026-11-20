@@ -1,0 +1,85 @@
+/* DRAP — Agendamento de reunião (/agendar) */
+[hidden] { display: none !important; }
+.ag { padding: 110px 0 90px; }
+.ag-head { max-width: 900px; margin-bottom: 36px; }
+.ag-head .section__title { margin: 14px 0 14px; }
+.ag-shell { display: grid; grid-template-columns: 1fr 340px; gap: clamp(24px, 3vw, 56px); align-items: start; }
+.ag-form, .ag-side__card, .ag-done {
+  background: linear-gradient(135deg, var(--glass-sheen), transparent 40%), var(--glass-bg); border: 1px solid var(--glass-line);
+  border-radius: 20px; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+}
+.ag-form { padding: clamp(22px, 2.6vw, 38px); display: grid; gap: 30px; }
+.ag-step { display: grid; gap: 14px; }
+.ag-step h2 { display: flex; align-items: baseline; gap: 12px; margin: 0; font-size: 22px; font-weight: 500; letter-spacing: -.02em; }
+.ag-step h2 > span { font-size: 12px; color: var(--accent-text); }
+.ag-step h2 small { font-size: 11px; color: var(--text-mute); font-weight: 400; }
+
+.ag-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ag-mode { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 16px; border-radius: 14px; cursor: pointer;
+  border: 1px solid var(--glass-line); background: var(--glass-bg-soft); transition: border-color .2s, background .2s; }
+.ag-mode input { position: absolute; opacity: 0; pointer-events: none; }
+.ag-mode:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--glass-bg)); }
+.ag-mode:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ag-mode__ic { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--brand-mark) 10%, transparent); color: var(--brand-mark); }
+.ag-mode__ic .ic { width: 22px; height: 22px; }
+.ag-mode b { display: block; font-size: 16px; }
+.ag-mode small { color: var(--text-mute); font-size: 13px; }
+.ag-place { display: grid; gap: 10px; padding: 14px 16px; border-radius: 14px; border: 1px dashed var(--line-strong); }
+.ag-radio { display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; cursor: pointer; }
+.ag-radio input { margin-top: 4px; accent-color: var(--accent); }
+.ag-radio small { color: var(--text-mute); }
+
+.ag-days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.ag-day { flex: none; display: grid; gap: 2px; justify-items: center; min-width: 86px; padding: 10px 12px; border-radius: 12px; cursor: pointer;
+  font: inherit; color: var(--text); border: 1px solid var(--glass-line); background: var(--glass-bg-soft); }
+.ag-day small { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--text-mute); }
+.ag-day b { font-size: 16px; font-weight: 600; }
+.ag-day span { font-size: 10px; color: var(--text-mute); }
+.ag-day[aria-selected="true"] { background: var(--brand-mark); border-color: var(--brand-mark); color: #FBF7F2; }
+.ag-day[aria-selected="true"] small, .ag-day[aria-selected="true"] span { color: rgba(251, 247, 242, .75); }
+.ag-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.ag-time { padding: 11px 8px; border-radius: 10px; cursor: pointer; font: 500 15px var(--font-mono); color: var(--text); border: 1px solid var(--glass-line); background: var(--glass-bg-soft); }
+.ag-time:hover { border-color: var(--line-strong); }
+.ag-time[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.ag-empty { margin: 0; color: var(--text-mute); }
+
+.ag-submit { display: grid; gap: 12px; justify-items: start; padding-top: 22px; border-top: 1px solid var(--line); }
+.ag-summary { margin: 0; color: var(--text-dim); }
+.ag-summary b { color: var(--text); }
+
+.ag-side { position: sticky; top: 100px; }
+.ag-side__card { padding: 24px; }
+.ag-side__card > p.mono { margin: 0 0 12px; font-size: 11px; letter-spacing: .16em; color: var(--text-mute); }
+.ag-side__card ol { margin: 0; padding-left: 20px; display: grid; gap: 10px; color: var(--text-dim); font-size: 14.5px; }
+.ag-side__card b { color: var(--text); }
+.ag-side__note { margin: 16px 0 0; font-size: 13px; color: var(--text-mute); }
+
+.ag-done { max-width: 760px; margin: 0 auto; padding: clamp(28px, 3.5vw, 52px); text-align: left; }
+.ag-done__ic { width: 60px; height: 60px; border-radius: 16px; display: inline-grid; place-items: center; background: var(--brand-mark); color: #FBF7F2; margin-bottom: 16px; }
+.ag-done__ic .ic { width: 28px; height: 28px; }
+.ag-done__k { margin: 0; font-size: 12px; letter-spacing: .16em; color: var(--accent-text); }
+.ag-done h2 { margin: 8px 0 20px; font-size: clamp(26px, 2.6vw, 38px); font-weight: 500; letter-spacing: -.03em; }
+.ag-done__dl { margin: 0 0 18px; display: grid; gap: 0; border: 1px solid var(--glass-line); border-radius: 14px; overflow: hidden; }
+.ag-done__dl div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 13px 16px; border-top: 1px solid var(--line); font-size: 15px; }
+.ag-done__dl div:first-child { border-top: 0; }
+.ag-done__dl dt { color: var(--text-mute); }
+.ag-done__dl dd { margin: 0; word-break: break-word; }
+.ag-done__dl a { color: var(--accent-2-text); }
+.ag-done__p { color: var(--text-dim); margin: 0 0 20px; }
+.ag-done__act { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.ag-cancel { background: none; border: 0; padding: 0; color: var(--text-mute); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: 12px; }
+.ag-cancel:hover { color: var(--err); }
+.ag-status { font-weight: 600; }
+.ag-status--solicitada { color: var(--accent-text); }
+.ag-status--confirmada, .ag-status--realizada { color: var(--ok); }
+.ag-status--cancelada { color: var(--err); }
+
+@media (max-width: 1000px) {
+  .ag-shell { grid-template-columns: 1fr; }
+  .ag-side { position: static; order: -1; }
+}
+@media (max-width: 640px) {
+  .ag { padding-top: 96px; }
+  .ag-modes { grid-template-columns: 1fr; }
+  .ag-done__dl div { grid-template-columns: 1fr; gap: 2px; }
+}

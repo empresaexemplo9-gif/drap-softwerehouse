@@ -11,6 +11,17 @@
     logo: r.logo_svg ? { svg: r.logo_svg } : r.logo_url ? { src: r.logo_url } : null,
     preview: r.preview_image ? { image: r.preview_image } : { key: r.preview_key || r.id },
   });
+  /* Depoimentos aprovados no painel (prova social): a faixa só aparece quando houver algum */
+  function showTestimonials(list) {
+    const box = document.getElementById("home-voices");
+    if (!box || !list.length) return;
+    const e = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    document.getElementById("home-quotes").innerHTML = list.slice(0, 3).map((t) => `<figure class="proof-quote">
+      <blockquote>“${e(t.quote)}”</blockquote>
+      <figcaption>${t.rating ? `<span class="proof-stars" aria-label="${t.rating} de 5">${"★".repeat(t.rating)}</span>` : ""}
+        <b>${e(t.name)}</b><small>${e([t.role, t.company, t.platform_name].filter(Boolean).join(" · "))}</small></figcaption></figure>`).join("");
+    box.hidden = false;
+  }
   let platforms = window.DRAP_PLATFORMS || [];
   let settings = {};
   let online = false; // true quando o catálogo veio do banco (API funcionando)
@@ -18,6 +29,7 @@
     const data = await api.catalog();
     if (Array.isArray(data?.platforms) && data.platforms.length) platforms = data.platforms.map(fromRow);
     settings = data?.settings || {};
+    showTestimonials(data?.testimonials || []);
     online = true;
   } catch { /* API/banco indisponível: segue com o catálogo local */ }
   $$("[data-setting]").forEach((el) => { if (settings[el.dataset.setting]) el.textContent = settings[el.dataset.setting]; });
@@ -113,7 +125,10 @@ ${renderPreview(p)}
 
         <div class="card__foot">
           <div class="stack">${p.stack.map((s) => `<span>${esc(s)}</span>`).join("")}</div>
-          <a class="card__link" href="/plataformas/${esc(p.id)}" aria-label="Conhecer a plataforma ${esc(p.name)}">Conhecer <i>→</i></a>
+          <div class="card__actions">
+            ${isExternal(p.url) ? `<a class="card__live" href="${esc(p.url)}" target="_blank" rel="noopener" aria-label="Ver a plataforma ${esc(p.name)} ao vivo (abre em nova aba)"><b aria-hidden="true"></b>Ao vivo <i aria-hidden="true">↗</i></a>` : ""}
+            <a class="card__link" href="/plataformas/${esc(p.id)}" aria-label="Conhecer a plataforma ${esc(p.name)}">Conhecer <i>→</i></a>
+          </div>
         </div>
       </article>`;
     })
@@ -202,19 +217,21 @@ ${renderPreview(p)}
       platform_id: isPlatform ? choice : null,
       interest: isPlatform ? null : choice,
       message: v("message"),
-      source: (utm || document.referrer || "direto").slice(0, 200),
+      source: (window.DRAP_ATTR?.() || utm || document.referrer || "direto").slice(0, 200),
       website: form.elements.website.value, // campo-isca anti-robô (validado no servidor)
     };
 
     if (!online) {
-      setStatus("err", "✕ envio indisponível no momento. Fale conosco pelo e-mail ao lado.");
+      const to = settings.contact_email || "drap@drap.app.br";
+      status.className = "form__status mono err";
+      status.innerHTML = `✕ envio indisponível agora. <a href="mailto:${to}?subject=${encodeURIComponent("Quero falar com um especialista")}&body=${encodeURIComponent(`${lead.name || ""}\n${lead.company || ""}\n${lead.phone || ""}\n\n${lead.message || ""}`)}">Enviar pelo seu e-mail</a>`;
       return;
     }
     btn.disabled = true; btn.classList.add("is-loading");
     setStatus("", "› enviando…");
     try {
       await api.sendLead(lead);
-      setStatus("ok", "✓ solicitação registrada. Retornaremos em até 24h úteis.");
+      setStatus("ok", `✓ mensagem enviada para a equipe da DRAP. Responderemos no e-mail ${lead.email} em até 24h úteis.`);
       form.reset();
     } catch (err) {
       setStatus("err", `✕ ${err.message || "não foi possível enviar. Tente novamente."}`);

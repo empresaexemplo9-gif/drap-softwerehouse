@@ -29,7 +29,9 @@ createServer(async (req, res) => {
     }
   }
   // rewrites do vercel.json (ex.: /plataformas/:id → /plataforma)
-  for (const r of vercel.rewrites || []) {
+  // como na Vercel: arquivo estático existente vence o rewrite (ex.: dist/plataformas/<id>.html do SEO)
+  const staticHit = await stat(join(dist, normalize(decodeURIComponent(pathname)) + ".html")).then((x) => x.isFile(), () => false);
+  if (!staticHit) for (const r of vercel.rewrites || []) {
     const re = new RegExp("^" + r.source.replace(/:[a-z]+/gi, "[^/]+") + "/?$");
     if (re.test(pathname)) { req.url = r.destination; break; }
   }

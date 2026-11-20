@@ -23,10 +23,11 @@
     preview: r.preview_image ? { image: r.preview_image } : { key: r.preview_key || r.id },
   });
   let platforms = window.DRAP_PLATFORMS || [];
-  let online = false;
+  let online = false, testimonials = [];
   try {
     const data = await window.DRAP_API.catalog();
     if (data?.platforms?.length) platforms = data.platforms.map(fromRow);
+    testimonials = data?.testimonials || [];
     online = true;
   } catch { /* segue com o catálogo local */ }
 
@@ -84,7 +85,8 @@
         <p class="pd-hero__headline serif">${esc(d?.headline || p.tagline)}</p>
         <p class="pd-hero__lead">${esc(d?.lead || p.summary)}</p>
         <div class="hero__cta">
-          <a href="#demo" class="btn btn--primary"><span class="btn__label">Solicitar demonstração</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a href="/plataformas/${esc(p.id)}/proposta" class="btn btn--primary"><span class="btn__label">Receber proposta</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a href="#demo" class="btn btn--ghost"><span class="btn__label">Solicitar demonstração</span></a>
           ${isExternal(p.url) ? `<a href="${esc(p.url)}" target="_blank" rel="noopener" class="btn btn--ghost"><span class="btn__label">Ver plataforma ao vivo</span><span class="btn__kbd mono">↗</span></a>` : ""}
         </div>
         <div class="stack pd-stack">${p.stack.map((s) => `<span>${esc(s)}</span>`).join("")}</div>
@@ -145,6 +147,36 @@
     ${d ? section("06", "Perguntas frequentes", `Antes de <span class="serif">decidir</span>`, `
       <div class="pd-faq">${d.faq.map((f) => `<details class="pd-card"><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("")}</div>`) : ""}
 
+    ${testimonials.some((t) => t.platform_id === p.id) ? `
+    <section class="container pd-sec reveal">
+      <header class="pd-sec__head"><div class="section__index mono"><span>★</span> / Quem usa</div>
+        <h2 class="section__title">O que dizem os clientes do <span class="serif">${esc(p.name)}</span></h2></header>
+      <div class="proof-quotes">${testimonials.filter((t) => t.platform_id === p.id).slice(0, 3).map((t) => `<figure class="proof-quote">
+        <blockquote>“${esc(t.quote)}”</blockquote>
+        <figcaption>${t.rating ? `<span class="proof-stars" aria-label="${t.rating} de 5">${"★".repeat(t.rating)}</span>` : ""}
+          <b>${esc(t.name)}</b><small>${esc([t.role, t.company].filter(Boolean).join(" · "))}</small></figcaption></figure>`).join("")}</div>
+    </section>` : ""}
+
+    <section class="container pd-sec" id="proposta">
+      <div class="pd-quote reveal">
+        <div class="pd-quote__copy">
+          <div class="section__index mono"><span>$</span> / Proposta automática</div>
+          <h2 class="section__title">Receba a proposta do ${esc(p.name)} <span class="serif">em 3 minutos.</span></h2>
+          <p class="section__lead">Responda algumas perguntas sobre a sua operação, escolha os módulos extras e receba na hora a proposta com implantação,
+            licença mensal, cronograma e investimento, na identidade do ${esc(p.name)}. Por link, PDF ou e-mail.</p>
+          <a href="/plataformas/${esc(p.id)}/proposta" class="btn btn--primary"><span class="btn__label">Montar minha proposta</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a href="/portfolio#case-${esc(p.id)}" class="btn btn--ghost"><span class="btn__label">Ver o case no portfólio</span></a>
+          <a href="/agendar?plataforma=${esc(p.id)}&assunto=${encodeURIComponent(p.name)}" class="btn btn--ghost"><span class="btn__label">Agendar reunião</span></a>
+        </div>
+        <ol class="pd-quote__steps mono">
+          <li><b>01</b>Sobre a sua empresa</li>
+          <li><b>02</b>Quantas pessoas vão usar</li>
+          <li><b>03</b>Prioridades e módulos extras</li>
+          <li><b>04</b>Proposta pronta, com valores</li>
+        </ol>
+      </div>
+    </section>
+
     <section class="container pd-sec" id="demo">
       <div class="cta reveal">
         <div class="cta__corner cta__corner--tl"></div><div class="cta__corner cta__corner--tr"></div>
@@ -203,7 +235,7 @@
       const utm = ["utm_source", "utm_medium", "utm_campaign"].map((k) => params.get(k)).filter(Boolean).join(" / ");
       await window.DRAP_API.sendLead({
         name: v("name"), email: v("email"), company: v("company"), phone: v("phone"), message: v("message"),
-        platform_id: p.id, source: (utm || `página ${p.id}` + (document.referrer ? ` · ${document.referrer}` : "")).slice(0, 200),
+        platform_id: p.id, source: (window.DRAP_ATTR?.() || utm || `página ${p.id}`).slice(0, 200),
         website: f.elements.website.value,
       });
       set("ok", "✓ solicitação registrada. Retornaremos em até 24h úteis.");

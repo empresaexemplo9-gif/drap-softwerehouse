@@ -6,12 +6,41 @@
   "regions": [
     "gru1"
   ],
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "{public/platform-details.js,db/**}"
+    }
+  },
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/servicos/:id",
+      "destination": "/servico"
+    },
+    {
+      "source": "/plataformas/:id/proposta",
+      "destination": "/sob-medida"
+    },
+    {
       "source": "/plataformas/:id",
       "destination": "/plataforma"
+    },
+    {
+      "source": "/agendar/:token",
+      "destination": "/agendar"
+    },
+    {
+      "source": "/depoimento/:token",
+      "destination": "/depoimento"
+    },
+    {
+      "source": "/proposta/modelo/:id",
+      "destination": "/proposta"
+    },
+    {
+      "source": "/proposta/:token",
+      "destination": "/proposta"
     }
   ],
   "headers": [
@@ -59,6 +88,19 @@
         {
           "key": "Cache-Control",
           "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/(proposta|depoimento)(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
         }
       ]
     },

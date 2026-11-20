@@ -19,8 +19,8 @@ const rows = platforms.map((p, i) => `  (${[
 ].join(", ")})`);
 
 const settings = {
-  contact_email: "contato@drap.com.br",
-  contact_whatsapp: "+55 (00) 00000-0000",
+  contact_email: "drap@drap.app.br",
+  contact_whatsapp: "+55 (62) 98266-3870",
   contact_hours: "Seg–Sex · 09h–18h",
 };
 

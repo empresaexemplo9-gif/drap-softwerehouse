@@ -52,6 +52,9 @@
       <a href="/" class="brand"><span class="brand__mark">  <svg viewBox="0 0 778 781" fill="currentColor" aria-hidden="true"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg></span><span class="brand__text"><strong>DRAP</strong><small>Painel<em>&amp;</em>Business</small></span></a>
       <nav class="adm-tabs" role="tablist">
         <button role="tab" class="is-active" data-tab="leads">Leads <b id="badge-new"></b></button>
+        <button role="tab" data-tab="proposals">Propostas <b id="badge-review"></b></button>
+        <button role="tab" data-tab="meetings">Reuniões <b id="badge-meet"></b></button>
+        <button role="tab" data-tab="testimonials">Depoimentos <b id="badge-testi"></b></button>
         <button role="tab" data-tab="platforms">Plataformas</button>
         <button role="tab" data-tab="settings">Configurações</button>
       </nav>
@@ -59,6 +62,7 @@
     </header>
 
     <main class="adm-main">
+      <p class="adm-envwarn" id="env-warn" role="alert" hidden></p>
       <!-- LEADS -->
       <section data-panel="leads">
         <div class="adm-kpis" id="lead-kpis"></div>
@@ -73,6 +77,47 @@
           <button class="btn btn--primary btn--sm" id="lead-export"><span class="btn__label">Exportar CSV</span><span class="btn__icon" aria-hidden="true">↓</span></button>
         </div>
         <div class="adm-card adm-table-wrap"><table class="adm-table" id="lead-table"></table></div>
+      </section>
+
+      <!-- PROPOSTAS (plataformas sob medida) -->
+      <section data-panel="proposals" hidden>
+        <div id="pr-list-view">
+          <div class="adm-kpis" id="pr-kpis"></div>
+          <div class="adm-toolbar">
+            <input type="search" id="pr-search" placeholder="Buscar por cliente, empresa ou número…" />
+            <select id="pr-filter">
+              <option value="">Todos os status</option>
+              <option value="em_analise">Em análise</option><option value="rascunho">Rascunho</option><option value="enviada">Enviada</option>
+              <option value="visualizada">Visualizada</option><option value="aceita">Aceita</option><option value="recusada">Recusada</option>
+            </select>
+            <button class="btn btn--ghost btn--sm" id="pr-refresh"><span class="btn__label">Atualizar</span></button>
+            <button class="btn btn--primary btn--sm" id="pr-new"><span class="btn__label">Nova proposta</span><span class="btn__icon" aria-hidden="true">+</span></button>
+          </div>
+          <p class="adm-muted adm-note" id="pr-mailnote" hidden></p>
+          <div class="adm-card adm-table-wrap"><table class="adm-table" id="pr-table"></table></div>
+        </div>
+        <div id="pr-edit-view" hidden></div>
+      </section>
+
+      <!-- REUNIÕES (fase de negociação: agendadas pelo cliente em /agendar) -->
+      <section data-panel="meetings" hidden>
+        <p class="adm-muted">Reuniões marcadas pelos clientes em <b>/agendar</b> ou pelo botão da proposta. Confirme (online exige o link da videochamada), remarque ou cancele: o cliente é avisado por e-mail quando o envio está configurado.
+          A agenda (dias, horários, duração, endereço) fica em Configurações.</p>
+        <div class="adm-toolbar">
+          <select id="mt-filter"><option value="proximas">Próximas (solicitadas e confirmadas)</option><option value="solicitada">Solicitadas</option><option value="confirmada">Confirmadas</option><option value="realizada">Realizadas</option><option value="cancelada">Canceladas</option><option value="todas">Todas</option></select>
+          <button class="btn btn--ghost btn--sm" id="mt-refresh"><span class="btn__label">Atualizar</span></button>
+          <button class="btn btn--ghost btn--sm" id="mt-copy-link"><span class="btn__label">Copiar link da agenda</span></button>
+        </div>
+        <p class="adm-muted adm-note" id="mt-mailnote" hidden>Envio de e-mail desativado: confirme também pelo WhatsApp do cliente (link em cada reunião).</p>
+        <div class="adm-mlist" id="mt-list"></div>
+      </section>
+
+      <!-- DEPOIMENTOS (prova social do site e do portfólio) -->
+      <section data-panel="testimonials" hidden>
+        <p class="adm-muted">Depoimentos aparecem na home, no portfólio e na página da plataforma <b>só depois de publicados</b> e com a autorização do cliente.
+          Para pedir um, abra uma proposta <b>aceita</b> e use “Pedir depoimento”: o cliente responde por um link próprio.</p>
+        <div class="adm-toolbar"><button class="btn btn--primary btn--sm" id="ts-new"><span class="btn__label">Cadastrar depoimento recebido</span><span class="btn__icon" aria-hidden="true">+</span></button></div>
+        <div class="adm-tlist" id="ts-list"></div>
       </section>
 
       <!-- PLATAFORMAS -->
@@ -90,6 +135,12 @@
 
   <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
 
+  <dialog class="adm-dialog" id="adm-dialog"></dialog>
+
+  <script src="/custom-icons.js"></script>
   <script src="/admin/admin.js"></script>
+  <script src="/admin/proposals.js"></script>
+  <script src="/admin/testimonials.js"></script>
+  <script src="/admin/meetings.js"></script>
 </body>
 </html>

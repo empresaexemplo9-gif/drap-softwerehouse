@@ -8,7 +8,7 @@
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;1,500&family=Manrope:wght@500;600;700&family=Roboto+Mono:wght@500&family=Playfair+Display:ital,wght@0,500;1,500&family=Jost:wght@400;500&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;1,500&family=Manrope:wght@500;600;700&family=Roboto+Mono:wght@500&family=Playfair+Display:ital,wght@0,500;1,500&family=Jost:wght@400;500&family=Cormorant+Garamond:wght@400;500&family=Space+Grotesk:wght@500;700&family=Hanken+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
   <meta name="theme-color" content="#f5f3ee" />
   <script src="/theme-init.js"></script>
   <link rel="stylesheet" href="/styles.css" />
@@ -40,9 +40,10 @@
 
       <nav class="nav__links" aria-label="Principal">
         <a href="#plataformas"><span>01</span>Plataformas</a>
-        <a href="#servicos"><span>02</span>Serviços</a>
-        <a href="#processo"><span>03</span>Processo</a>
-        <a href="#contato"><span>04</span>Contato</a>
+        <a href="#sob-medida"><span>02</span>Sob medida</a>
+        <a href="/portfolio"><span>03</span>Portfólio</a>
+        <a href="#servicos"><span>04</span>Serviços</a>
+        <a href="#contato"><span>05</span>Contato</a>
       </nav>
 
       <div class="nav__actions">
@@ -92,14 +93,14 @@
             <span class="btn__label">Explorar plataformas</span>
             <span class="btn__icon" aria-hidden="true">↘</span>
           </a>
-          <a href="#contato" class="btn btn--ghost">
-            <span class="btn__label">Agendar demonstração</span>
-            <span class="btn__kbd mono">⌘ K</span>
+          <a href="/sob-medida" class="btn btn--ghost">
+            <span class="btn__label">Plataforma sob medida</span>
+            <span class="btn__icon" aria-hidden="true">→</span>
           </a>
         </div>
 
         <dl class="hero__stats reveal">
-          <div><dt class="mono">PLATAFORMAS</dt><dd><span data-count="6">0</span></dd></div>
+          <div><dt class="mono">PLATAFORMAS</dt><dd><span data-count="9">0</span></dd></div>
           <div><dt class="mono">UPTIME SLA</dt><dd><span data-count="99.9" data-decimals="1">0</span>%</dd></div>
           <div><dt class="mono">GO-LIVE MÉDIO</dt><dd><span data-count="21">0</span> dias</dd></div>
         </dl>
@@ -148,47 +149,144 @@
       <div class="filters reveal" role="tablist" aria-label="Filtrar plataformas" id="filters"></div>
 
       <div class="grid" id="platform-grid"></div>
+
+      <div class="next-step reveal">
+        <div class="next-step__copy">
+          <p class="next-step__k mono">PRÓXIMO PASSO · PLATAFORMAS</p>
+          <h3>Escolha a plataforma e receba a proposta</h3>
+          <p>Veja cada plataforma como case no portfólio e receba a proposta com implantação, licença e módulos em poucos minutos. Prefere conversar antes? Agende uma reunião.</p>
+        </div>
+        <div class="next-step__act">
+          <a class="btn btn--primary" href="/portfolio"><span class="btn__label">Ver plataformas no portfólio</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="/agendar?assunto=Conhecer%20as%20plataformas%20prontas"><span class="btn__label">Agendar reunião</span></a>
+        </div>
+      </div>
+
+      <div class="home-voices" id="home-voices" hidden>
+        <div class="section__index mono"><span>★</span> / Quem usa</div>
+        <div class="proof-quotes" id="home-quotes"></div>
+      </div>
+    </section>
+
+    <!-- ============ SOB MEDIDA (S/03 em destaque) ============ -->
+    <section class="section container" id="sob-medida">
+      <header class="section__head">
+        <div class="section__index mono reveal"><span>02</span> / Sob medida</div>
+      </header>
+
+      <div class="bespoke reveal">
+        <div class="bespoke__copy">
+          <div class="bespoke__tag mono"><span>S/03</span>Desenvolvimento sob medida</div>
+          <h2 class="section__title">A plataforma que a sua empresa precisa, <span class="serif">construída do zero.</span></h2>
+          <p class="bespoke__lead">Quando nenhum produto pronto resolve, a DRAP desenha e constrói o seu. Squads dedicados criam módulos,
+            integrações ou produtos completos a partir da sua regra de negócio, com a sua marca e no seu ritmo.</p>
+
+          <ul class="bespoke__list">
+            <li><b>Discovery</b><span>Imersão na operação, fluxos e protótipo navegável antes de escrever código.</span></li>
+            <li><b>UX/UI</b><span>Interface com a sua identidade visual, pensada para quem usa todos os dias.</span></li>
+            <li><b>Entrega contínua</b><span>Versões quinzenais para você acompanhar e validar cada etapa.</span></li>
+            <li><b>Integrações</b><span>Notas fiscais, bancos e PIX, pagamentos, WhatsApp, ERP e o que mais a operação pedir.</span></li>
+          </ul>
+
+          <div class="hero__cta bespoke__cta">
+            <a href="/sob-medida" class="btn btn--primary">
+              <span class="btn__label">Descrever minha plataforma</span>
+              <span class="btn__icon" aria-hidden="true">→</span>
+            </a>
+            <a href="#contato" class="btn btn--ghost"><span class="btn__label">Falar com um especialista</span></a>
+          </div>
+          <p class="bespoke__note mono">≈ 5 minutos · proposta na hora para projetos simples · análise da equipe em até 2 dias úteis</p>
+        </div>
+
+        <div class="bespoke__visual" aria-hidden="true">
+          <ol class="bespoke__flow">
+            <li><span class="mono">01</span><div><b>Você descreve</b><small>Questionário guiado: objetivos, usuários, funcionalidades e integrações.</small></div></li>
+            <li><span class="mono">02</span><div><b>A DRAP calcula</b><small>Escopo, módulos e valores com base no mercado de plataformas equivalentes.</small></div></li>
+            <li><span class="mono">03</span><div><b>Você recebe a proposta</b><small>Com a nossa marca, por link, PDF ou e-mail.</small></div></li>
+          </ol>
+
+          <div class="bespoke__doc">
+            <div class="bespoke__doc-top">
+              <span class="bespoke__mark"><svg viewBox="0 0 778 781" fill="currentColor"><path d="M0 0H533L212 781H0Z"/><path d="M581 2C601 2 777 60 777 290V480C777 675 652 781 512 781H219Z"/></svg></span>
+              <span class="mono">PROPOSTA · DRAP-2026-0042</span>
+            </div>
+            <b class="bespoke__doc-title">Plataforma sob medida</b>
+            <div class="bespoke__mods">
+              <span class="is-on">Núcleo da plataforma<i></i></span>
+              <span class="is-on">Emissão de notas fiscais<i></i></span>
+              <span class="is-on">Integração bancária<i></i></span>
+              <span>WhatsApp Business<i></i></span>
+            </div>
+            <div class="bespoke__doc-foot">
+              <div><small class="mono">IMPLANTAÇÃO</small><b>sob consulta</b></div>
+              <div><small class="mono">PRAZO</small><b>em semanas</b></div>
+              <div class="bespoke__save mono">abaixo da média de mercado</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="next-step reveal">
+        <div class="next-step__copy">
+          <p class="next-step__k mono">PRÓXIMO PASSO · SOB MEDIDA</p>
+          <h3>Descreva a sua plataforma ou converse com a gente</h3>
+          <p>Em 5 minutos o questionário monta a proposta com escopo, módulos e investimento. Se o projeto ainda está tomando forma, uma reunião ajuda a desenhar o escopo.</p>
+        </div>
+        <div class="next-step__act">
+          <a class="btn btn--primary" href="/sob-medida"><span class="btn__label">Descrever minha plataforma</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="/agendar?assunto=Desenvolvimento%20sob%20medida"><span class="btn__label">Agendar reunião</span></a>
+        </div>
+      </div>
     </section>
 
     <!-- ============ SERVIÇOS ============ -->
     <section class="section container" id="servicos">
       <header class="section__head">
-        <div class="section__index mono reveal"><span>02</span> / Serviços</div>
+        <div class="section__index mono reveal"><span>03</span> / Serviços</div>
         <h2 class="section__title reveal">Além do produto, <span class="serif">parceria técnica</span></h2>
+        <p class="section__lead reveal">Clique em um serviço para ver como funciona, o tutorial passo a passo e as boas práticas para usar de forma profissional.</p>
       </header>
 
       <div class="services">
-        <article class="service reveal">
+        <a class="service service--link reveal" href="/servicos/licenciamento-saas" aria-label="Ver painel e tutorial: S/01">
           <div class="service__num mono">S/01</div>
           <h3>Licenciamento SaaS</h3>
           <p>Use nossas plataformas por assinatura, com hospedagem, atualizações e monitoramento 24/7 inclusos.</p>
           <ul class="mono"><li>Multi-tenant</li><li>SLA 99,9%</li><li>Backups diários</li></ul>
-        </article>
-        <article class="service reveal">
+          <span class="service__more">Ver painel e tutorial <i aria-hidden="true">→</i></span>
+        </a>
+        <a class="service service--link reveal" href="/servicos/white-label" aria-label="Ver painel e tutorial: S/02">
           <div class="service__num mono">S/02</div>
           <h3>White-label</h3>
           <p>Sua marca, seu domínio, suas cores. Revenda a plataforma como produto próprio com o nosso suporte técnico.</p>
           <ul class="mono"><li>Domínio próprio</li><li>Tema customizável</li><li>Apps nas lojas</li></ul>
-        </article>
-        <article class="service reveal">
-          <div class="service__num mono">S/03</div>
-          <h3>Desenvolvimento sob medida</h3>
-          <p>Squads dedicados para criar módulos, integrações ou produtos completos a partir da sua regra de negócio.</p>
-          <ul class="mono"><li>Discovery</li><li>UX/UI</li><li>Entrega contínua</li></ul>
-        </article>
-        <article class="service reveal">
+          <span class="service__more">Ver painel e tutorial <i aria-hidden="true">→</i></span>
+        </a>
+        <a class="service service--link reveal" href="/servicos/consultoria" aria-label="Ver painel e tutorial: S/04">
           <div class="service__num mono">S/04</div>
           <h3>Consultoria & Business</h3>
           <p>Arquitetura, cloud, dados e estratégia digital para transformar tecnologia em vantagem competitiva.</p>
           <ul class="mono"><li>Cloud & DevOps</li><li>Dados & BI</li><li>Go-to-market</li></ul>
-        </article>
+          <span class="service__more">Ver painel e tutorial <i aria-hidden="true">→</i></span>
+        </a>
+      </div>
+      <div class="next-step reveal">
+        <div class="next-step__copy">
+          <p class="next-step__k mono">PRÓXIMO PASSO · SERVIÇOS</p>
+          <h3>Não sabe qual serviço é o ideal?</h3>
+          <p>Assinatura, white-label ou consultoria: em uma conversa entendemos o seu momento e indicamos o caminho, com o tutorial de cada serviço para começar.</p>
+        </div>
+        <div class="next-step__act">
+          <a class="btn btn--primary" href="/servicos/licenciamento-saas"><span class="btn__label">Ver painéis e tutoriais</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="/agendar?assunto=Escolher%20o%20servi%C3%A7o%20ideal%20%28SaaS%2C%20white-label%20ou%20consultoria%29"><span class="btn__label">Agendar reunião</span></a>
+        </div>
       </div>
     </section>
 
     <!-- ============ PROCESSO ============ -->
     <section class="section container" id="processo">
       <header class="section__head">
-        <div class="section__index mono reveal"><span>03</span> / Processo</div>
+        <div class="section__index mono reveal"><span>04</span> / Processo</div>
         <h2 class="section__title reveal">Do primeiro contato ao <span class="serif">go-live</span></h2>
       </header>
 
@@ -198,6 +296,17 @@
         <li class="reveal"><span class="pipeline__node mono">03</span><h4>Migração & integrações</h4><p>Importação de dados e conexão com seus sistemas.</p><code class="mono">~ 7 dias</code></li>
         <li class="reveal"><span class="pipeline__node mono">04</span><h4>Go-live & suporte</h4><p>Treinamento da equipe e acompanhamento contínuo.</p><code class="mono">contínuo</code></li>
       </ol>
+      <div class="next-step reveal">
+        <div class="next-step__copy">
+          <p class="next-step__k mono">PRÓXIMO PASSO · DIAGNÓSTICO</p>
+          <h3>Agende uma conversa inicial</h3>
+          <p>Em uma reunião entendemos a operação, as metas e as integrações necessárias, e propomos o caminho até o go-live.</p>
+        </div>
+        <div class="next-step__act">
+          <a class="btn btn--primary" href="#contato"><span class="btn__label">Falar com um especialista</span><span class="btn__icon" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="/agendar?assunto=Diagn%C3%B3stico%20inicial"><span class="btn__label">Agendar reunião</span></a>
+        </div>
+      </div>
     </section>
 
     <!-- ============ CONTATO ============ -->
@@ -209,14 +318,15 @@
         <div class="cta__corner cta__corner--br"></div>
 
         <div class="cta__copy">
-          <div class="section__index mono"><span>04</span> / Contato</div>
+          <div class="section__index mono"><span>05</span> / Contato</div>
           <h2 class="section__title">Vamos colocar a sua operação <span class="serif">no ar?</span></h2>
           <p class="section__lead">Conte qual plataforma interessa e retornamos com uma demonstração personalizada em até 24h úteis.</p>
           <ul class="cta__meta mono">
-            <li><span>EMAIL</span><b data-setting="contact_email">contato@drap.com.br</b></li>
-            <li><span>WHATSAPP</span><b data-setting="contact_whatsapp">+55 (00) 00000-0000</b></li>
+            <li><span>EMAIL</span><b data-setting="contact_email">drap@drap.app.br</b></li>
+            <li><span>WHATSAPP</span><b data-setting="contact_whatsapp">+55 (62) 98266-3870</b></li>
             <li><span>HORÁRIO</span><b data-setting="contact_hours">Seg–Sex · 09h–18h</b></li>
           </ul>
+          <a class="btn btn--ghost cta__meet" href="/agendar"><span class="btn__label">Agendar reunião online ou presencial</span><span class="btn__icon" aria-hidden="true">→</span></a>
         </div>
 
         <form class="form" id="contact-form" novalidate>
@@ -274,6 +384,7 @@
 
   <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="/marketing.js"></script>
   <script src="/api.js"></script>
   <script src="/platforms.js"></script>
   <script src="/previews.js"></script>

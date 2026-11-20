@@ -10,7 +10,7 @@ export default handler(["GET", "PATCH"], async (req, res) => {
   requireAdmin(req);
   if (req.method === "GET") {
     const { rows } = await query(
-      `select id, name, email, phone, company, platform_id, interest, message, source, status, notes, created_at
+      `select id, name, email, phone, company, platform_id, interest, message, source, status, notes, created_at, forwarded_via, forwarded_at, forward_error
          from leads order by created_at desc limit 1000`);
     return send(res, 200, rows);
   }

@@ -1,6 +1,8 @@
 // POST /api/leads → registra um pedido de demonstração (público)
 import { query } from "../lib/db.js";
 import { handler, send, readJson, httpError, clientIpHash } from "../lib/http.js";
+import { forwardContact } from "../lib/forward.js";
+import { settings, siteUrl } from "../lib/proposals.js";
 
 const str = (v, max) => {
   if (v == null) return null;
@@ -34,9 +36,20 @@ export default handler(["POST"], async (req, res) => {
     const p = await query("select 1 from platforms where id = $1 and active", [lead.platform_id]);
     if (!p.rowCount) { lead.interest = lead.interest || lead.platform_id; lead.platform_id = null; }
   }
-  await query(
+  const { rows: [saved] } = await query(
     `insert into leads (name, email, phone, company, platform_id, interest, message, source, ip_hash)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id`,
     [lead.name, lead.email, lead.phone, lead.company, lead.platform_id, lead.interest, lead.message, lead.source, ip]);
+
+  // Encaminha para o e-mail da DRAP (responder = e-mail do cliente). O lead já está salvo:
+  // se o envio falhar, ele continua no painel para a equipe responder de lá.
+  const s = await settings().catch(() => ({}));
+  let interest = lead.interest;
+  if (lead.platform_id) { const { rows: [pl] } = await query("select name from platforms where id = $1", [lead.platform_id]); interest = pl?.name || interest; }
+  const fw = await forwardContact(lead, { to: process.env.MAIL_TEAM || s.contact_email, interest, site: siteUrl(req) })
+    .catch((e) => ({ ok: false, via: null, detail: String(e.message || e).slice(0, 200) }));
+  if (!fw.ok) console.error("contato: encaminhamento falhou", fw.via, fw.detail);
+  await query("update leads set forwarded_via = $2, forwarded_at = $3, forward_error = $4 where id = $1",
+    [saved.id, fw.via, fw.ok ? new Date() : null, fw.ok ? null : (fw.detail || null)]).catch(() => {});
   send(res, 201, { ok: true });
 });
