@@ -170,7 +170,7 @@ window.DRAP_PLATFORMS = [
     features: ["White-label multi-tenant", "Trilhas & progresso", "Perfis & permissões", "2FA + LGPD"],
     stack: ["Next.js 15", "PostgreSQL", "Prisma"],
     status: "Disponível",
-    palette: ["#25465A", "#C9A86A", "#102A3C", "#FAF9F6"],
+    palette: ["#25465A", "#D10016", "#102A3C", "#FAF9F6"],
     logo: {
       svg: '<svg viewBox="0 0 320 330" fill="currentColor" aria-hidden="true"><mask id="m-professor" maskUnits="userSpaceOnUse" x="0" y="0" width="320" height="330"><rect width="320" height="330" fill="#fff"/><path d="M236 -4L252 -4L103 334L97 334Z" fill="#000"/></mask><path d="M0 0H232C284 0 320 46 320 100V230C320 292 284 330 236 330H0Z" mask="url(#m-professor)"/></svg>'
     },

@@ -1,13 +1,13 @@
 /* ==========================================================================
    DRAP — Proposta comercial
    Paleta oficial: petróleo #024C5E · petróleo profundo #01313D · marfim #FBF7F2
-                   areia #F3EEE6 · bronze #B48A4F · grafite #121419
+                   areia #F3EEE6 · bronze #C4001A · grafite #121419
    Sempre em tema claro (documento). Impressão/PDF em A4 com marca d'água.
    ========================================================================== */
 :root {
   --petrol: #024C5E; --petrol-2: #01313D; --petrol-3: #0B6479; --petrol-tint: #E3EEF0;
   --cream: #FBF7F2; --sand: #F3EEE6; --paper: #FFFDF9; --line: #E4DCCF; --line-2: #EFE8DD;
-  --gold: #B48A4F; --gold-2: #D9B97F; --gold-text: #8A672F;
+  --gold: #C4001A; --gold-2: #F00018; --gold-text: #990014; --tech: "Orbitron", "Rajdhani", ui-monospace, sans-serif;
   --ink: #121419; --dim: #4B505A; --mute: #7D828C; --ok: #17905F; --err: #B83249;
   --sans: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
   --serif: "Instrument Serif", Georgia, serif;
@@ -20,7 +20,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 body.pp { margin: 0; background: var(--sand); color: var(--ink); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--petrol); }
 .pp-k { margin: 0; font: 500 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--mute); }
-.pp-k--gold { color: var(--gold-text); }
+.pp-k--gold { color: var(--gold-text); font-family: var(--tech); }
 
 /* Marca d'água oficial (fixa: aparece em todas as páginas do PDF) */
 .pp-wm { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 0; }
@@ -62,12 +62,12 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var
 .pp-logo span { display: grid; line-height: 1.05; }
 .pp-logo strong { font-size: 22px; letter-spacing: .24em; font-weight: 700; }
 .pp-logo small { font: 10px var(--mono); letter-spacing: .16em; text-transform: uppercase; opacity: .7; }
-.pp-logo small em { color: var(--gold-2); font: inherit; font-style: normal; padding: 0 3px; }
+.pp-logo small em { color: var(--gold-2); font-family: var(--tech); font: inherit; font-style: normal; padding: 0 3px; }
 .pp-cover__meta { margin: 0; display: grid; grid-template-columns: repeat(3, auto); gap: 4px 26px; text-align: right; }
 .pp-cover__meta dt { font: 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; opacity: .6; }
 .pp-cover__meta dd { margin: 0; font-size: 14px; font-weight: 500; }
 .pp-cover__body { position: relative; padding: 70px 0 40px; max-width: 720px; }
-.pp-cover__body .pp-k--gold { color: var(--gold-2); }
+.pp-cover__body .pp-k--gold { color: var(--gold-2); font-family: var(--tech); }
 .pp-cover h1 { font: 400 clamp(38px, 6vw, 60px)/1.04 var(--serif); letter-spacing: -.01em; margin: 14px 0 18px; }
 .pp-cover__for { margin: 0; font-size: 17px; opacity: .85; }
 .pp-cover__kpis { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); margin: 0 -56px; border-top: 1px solid rgba(251, 247, 242, .14); }
@@ -75,7 +75,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var
 .pp-cover__kpis div:first-child { border-left: 0; padding-left: 56px; }
 .pp-cover__kpis small { display: block; font: 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; opacity: .6; }
 .pp-cover__kpis b { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
-.pp-cover__kpis div:first-child b { color: var(--gold-2); }
+.pp-cover__kpis div:first-child b { color: var(--gold-2); font-family: var(--tech); }
 
 .pp-state { margin: 28px 56px 0; padding: 14px 18px; border-radius: 12px; display: flex; gap: 10px; align-items: center; font-size: 15px; }
 .pp-state .ic { width: 20px; height: 20px; flex: none; }
@@ -86,7 +86,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var
 .pp-sec { position: relative; padding: 56px 56px 8px; }
 .pp-sec + .pp-sec { border-top: 1px solid var(--line-2); margin-top: 48px; }
 .pp-sec__h { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 22px; }
-.pp-sec__n { font: 400 54px/0.9 var(--serif); color: var(--gold); min-width: 64px; }
+.pp-sec__n { font: 400 54px/0.9 var(--serif); color: var(--gold); font-family: var(--tech); min-width: 64px; }
 .pp-sec__h h2 { font: 500 32px/1.15 var(--sans); letter-spacing: -.025em; margin: 6px 0 0; }
 .pp-lead { color: var(--dim); font-size: 16.5px; max-width: 760px; margin: 0 0 22px; }
 .pp-quote { margin: 0 0 22px; padding: 22px 26px; background: var(--cream); border-left: 3px solid var(--gold); border-radius: 0 14px 14px 0; font: 400 19px/1.5 var(--serif); color: var(--petrol-2); white-space: pre-line; }
@@ -163,13 +163,13 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var
 .pp-inv td small { display: block; color: var(--mute); font-size: 12px; }
 .pp-inv__disc td { color: var(--ok); }
 .pp-inv tfoot td { background: var(--petrol); color: var(--cream); font-weight: 600; font-size: 16px; border: 0; padding: 18px; }
-.pp-inv tfoot td:nth-child(2) { color: var(--gold-2); font-size: 20px; }
+.pp-inv tfoot td:nth-child(2) { color: var(--gold-2); font-family: var(--tech); font-size: 20px; }
 .pp-inv tfoot small { display: inline; color: rgba(251, 247, 242, .7); font-size: 12px; }
 .pp-terms { margin-top: 14px; padding: 16px 18px; border: 1px dashed var(--line); border-radius: 14px; }
 .pp-terms p { margin: 6px 0 0; font-size: 14px; color: var(--dim); }
 .pp-value { margin: 0; padding: 22px; border-radius: 16px; background: var(--petrol-2); color: var(--cream); position: relative; overflow: hidden; }
 .pp-value figcaption { display: grid; gap: 6px; margin-bottom: 20px; }
-.pp-value .pp-k { color: var(--gold-2); }
+.pp-value .pp-k { color: var(--gold-2); font-family: var(--tech); }
 .pp-value strong { font: 400 28px/1.15 var(--serif); }
 .pp-value small { font-size: 12.5px; opacity: .65; line-height: 1.45; }
 .pp-vbar { display: grid; gap: 6px; margin-bottom: 14px; font-size: 12.5px; }
@@ -188,7 +188,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var
 .pp-gantt__scale span:last-child { transform: translateX(-100%); }
 .pp-gantt__row { display: grid; grid-template-columns: 260px 1fr; align-items: center; padding: 10px 0; border-top: 1px solid var(--line-2); break-inside: avoid; }
 .pp-gantt__lbl { font-size: 14px; font-weight: 600; padding-right: 16px; }
-.pp-gantt__lbl b { font: 500 11px var(--mono); color: var(--gold-text); margin-right: 6px; }
+.pp-gantt__lbl b { font: 500 11px var(--mono); color: var(--gold-text); font-family: var(--tech); margin-right: 6px; }
 .pp-gantt__lbl small { display: block; font-weight: 400; color: var(--mute); font-size: 12px; }
 .pp-gantt__track { position: relative; height: 30px; background: repeating-linear-gradient(90deg, var(--line-2) 0 1px, transparent 1px 25%); border-radius: 6px; }
 .pp-gantt__track i { position: absolute; top: 4px; bottom: 4px; border-radius: 6px; background: linear-gradient(90deg, var(--petrol), var(--petrol-3)); display: flex; align-items: center; padding: 0 8px; min-width: 64px; }
@@ -209,9 +209,9 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var
 .pp-close ol { margin: 0 0 24px; padding-left: 20px; color: var(--dim); display: grid; gap: 6px; }
 .pp-close__act { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 .pp-close__contact { display: grid; gap: 10px; align-content: start; padding: 22px; border-radius: 16px; background: var(--petrol); color: var(--cream); }
-.pp-close__contact .pp-k { color: var(--gold-2); margin-bottom: 4px; }
+.pp-close__contact .pp-k { color: var(--gold-2); font-family: var(--tech); margin-bottom: 4px; }
 .pp-close__contact a, .pp-close__contact span { display: flex; gap: 10px; align-items: center; color: var(--cream); text-decoration: none; font-size: 14.5px; }
-.pp-close__contact .ic { width: 18px; height: 18px; color: var(--gold-2); flex: none; }
+.pp-close__contact .ic { width: 18px; height: 18px; color: var(--gold-2); font-family: var(--tech); flex: none; }
 .pp-sign { display: none; grid-column: 1 / -1; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 40px; }
 .pp-sign i { display: block; border-top: 1px solid var(--ink); margin-bottom: 6px; }
 .pp-sign span { font-size: 12.5px; color: var(--dim); }
