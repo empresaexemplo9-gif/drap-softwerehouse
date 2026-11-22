@@ -110,7 +110,7 @@
 .sm-page.is-platform { --accent: var(--pf); --accent-text: var(--pf); --brand-mark: var(--pf); --on-accent: #fff;
   --grad: linear-gradient(100deg, var(--pf) 0%, var(--pf-2) 100%); }
 :root[data-theme="dark"] .sm-page.is-platform { --accent: var(--pf-soft); --accent-text: var(--pf-soft); --brand-mark: var(--pf-soft); --on-accent: #06070a; }
-.sm-page.is-platform .brand__mark { color: #024C5E; }
+.sm-page.is-platform .brand__mark { color: var(--accent-text); }
 :root[data-theme="dark"] .sm-page.is-platform .brand__mark { color: #FBF7F2; }
 .sm-plat { display: flex; width: max-content; max-width: 100%; align-items: center; gap: 12px; margin-top: 18px; padding: 8px 16px 8px 8px; border-radius: 14px;
   background: var(--glass-bg); border: 1px solid var(--glass-line); box-shadow: 0 1px 0 var(--glass-edge) inset; }
