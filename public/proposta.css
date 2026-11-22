@@ -1,12 +1,12 @@
 /* ==========================================================================
    DRAP — Proposta comercial
    Paleta oficial: petróleo #024C5E · petróleo profundo #01313D · marfim #FBF7F2
-                   areia #F3EEE6 · bronze #C4001A · grafite #121419
+                   areia #F1F1F6 · vermelho #C4001A · grafite #121419
    Sempre em tema claro (documento). Impressão/PDF em A4 com marca d'água.
    ========================================================================== */
 :root {
   --petrol: #024C5E; --petrol-2: #01313D; --petrol-3: #0B6479; --petrol-tint: #E3EEF0;
-  --cream: #FBF7F2; --sand: #F3EEE6; --paper: #FFFDF9; --line: #E4DCCF; --line-2: #EFE8DD;
+  --cream: #F8F8FB; --sand: #F1F1F6; --paper: #FDFDFE; --line: #DDDDE8; --line-2: #EAEAF1;
   --gold: #C4001A; --gold-2: #F00018; --gold-text: #990014; --tech: "Orbitron", "Rajdhani", ui-monospace, sans-serif;
   --ink: #121419; --dim: #4B505A; --mute: #7D828C; --ok: #17905F; --err: #B83249;
   --sans: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
