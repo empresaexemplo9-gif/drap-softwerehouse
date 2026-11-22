@@ -1084,8 +1084,8 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
 @media (max-width: 640px) { .form__row { grid-template-columns: 1fr; } }
 
 /* Marca oficial DRAP (símbolo "D" com corte diagonal) */
-:root { --brand-mark: #024C5E; }
-:root[data-theme="dark"] { --brand-mark: #FBF7F2; }
+:root { --brand-mark: #990014; }
+:root[data-theme="dark"] { --brand-mark: #FF3347; }
 .brand__mark { color: var(--accent-text); width: 36px; height: 36px; }
 .brand__mark svg { width: 30px; height: 30px; }
 .brand__mark--sm, .brand__mark--sm svg { width: 22px; height: 22px; }

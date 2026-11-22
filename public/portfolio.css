@@ -56,7 +56,7 @@
 .pf-link:hover { color: var(--text); }
 .pf-printfoot { display: none; }
 
-.pf-case--bespoke { grid-template-columns: 1fr; --c: #024C5E; --c-rgb: 2, 76, 94; --c-strong: #024C5E; --c-soft: #8ccfff; }
+.pf-case--bespoke { grid-template-columns: 1fr; --c: #C4001A; --c-rgb: 196, 0, 26; --c-strong: #990014; --c-soft: #8ccfff; }
 .pf-case--bespoke .pf-logo { color: var(--brand-mark); }
 .pf-case__body--wide { max-width: 980px; }
 .pf-steps { list-style: none; padding: 0; margin: 0 0 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
