@@ -161,7 +161,7 @@
 .adm-actions label { display: grid; gap: 6px; font: 10.5px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-mute); }
 .adm-actions__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .adm-actions__row .btn { justify-content: center; }
-.adm-btn-gold { --btn-bg: linear-gradient(100deg, #024C5E, #0B6479); --btn-fg: #FBF7F2; }
+.adm-btn-gold { --btn-bg: linear-gradient(180deg, #F00018, #990014); --btn-fg: #ffffff; }
 
 .adm-check--block { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; cursor: pointer; }
 .adm-check--block input { margin-top: 4px; accent-color: var(--accent); width: 16px; height: 16px; }
