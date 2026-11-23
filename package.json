@@ -15,5 +15,7 @@
   },
   "dependencies": {
     "pg": "^8.23.1"
-  }
+  },
+  "license": "UNLICENSED",
+  "author": "DRAP INTELIGENCIA DE MERCADO LTDA (CNPJ 64.759.314/0001-55)"
 }
